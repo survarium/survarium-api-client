@@ -5,7 +5,7 @@ const handlers = api.handlers;
 const handlersNames = Object.keys(handlers);
 
 const index = function (req, res) {
-	const baseUrl = req.baseUrl;
+	const baseUrl = req.protocol + '://' + req.hostname + req.baseUrl;
 
 	let handlersList = handlersNames.reduce(function (result, method) {
 		result[method] = baseUrl + '/cmd/' + method + '/?param1=&param2=';
