@@ -5,7 +5,8 @@
   "main": "server/index.js",
   "scripts": {
     "test": "npm test",
-    "start": "./server/index.js"
+    "start": "./server/index.js",
+    "deps": "npm i && (cd server && npm run deps)"
   },
   "repository": {
     "type": "git",

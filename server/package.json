@@ -1,7 +1,11 @@
 {
+  "name": "@survarium-node/server",
   "dependencies": {
     "bluebird": "^3.1.1",
     "express": "^4.13.3",
     "got": "^5.2.1"
+  },
+  "scripts": {
+    "deps": "npm i"
   }
 }
