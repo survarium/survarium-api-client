@@ -4,7 +4,7 @@ const Promise = require('bluebird');
 
 /**
  * Return max match_id played in Survarium
- * param pid - not implemented and not ported // TODO: investigate getMaxMatchId(pid)
+ * param pid - not implemented and hasn't been ported // TODO: investigate getMaxMatchId(pid)
  */
 exports.getMaxMatchId = function () {
 	return new Promise(function (resolve) {
