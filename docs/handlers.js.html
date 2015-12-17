@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: handlers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: handlers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const Promise = require('bluebird');
+
+/**
+ * Return max match_id played in Survarium
+ * param pid - not implemented and not ported // TODO: investigate getMaxMatchId(pid)
+ */
+exports.getMaxMatchId = function () {
+	return new Promise(function (resolve) {
+		return resolve({
+			path: 'getmaxmatchid'
+		});
+	});
+};
+
+/**
+ * Return users public account id by $nickname
+ *
+ * @param {String} nickname
+ */
+exports.getPublicIdByNickname = function (nickname) {
+	return new Promise(function (resolve, reject) {
+		if (!nickname) {
+			return reject(new Error('no nickname received'));
+		}
+
+		return resolve({
+			path : 'getpublicidbynickname',
+			query: {
+				nickname: nickname
+			}
+		});
+	});
+};
+
+/**
+ * Return bunch of nicknames by array of public account ids
+ *
+ * @param {Array} pids
+ */
+exports.getNicknamesByPublicIds = function (pids) {
+	return new Promise(function (resolve, reject) {
+		if (!pids) {
+			return reject(new Error('no pids received'));
+		}
+
+		if (!pids.length) {
+			return reject(new Error('should be received at least one pid'));
+		}
+
+		return resolve({
+			path : 'getnicknamesbypidarray',
+			query: {
+				pids: pids.join(',')
+			}
+		});
+	});
+};
+
+/**
+ * Retrieve amount of played matches by  user whose public account Id equals $pid
+ *
+ * @param  pid
+ */
+exports.matchesCountByPublicId = function (pid) {
+	return new Promise(function (resolve) {
+		return resolve({
+			path : 'getmatchescountbypid',
+			query: {
+				pid: pid
+			}
+		});
+	});
+};
+
+/**
+ * Return particular amount of played matches of user with public account id = $pid
+ *
+ * @param  {String} pid
+ * @param  matchAmount
+ * @param  offset - offset from last played match ( by default 0 )
+ */
+exports.getMatchesIdByPublicId = function (pid, matchAmount, offset) {
+	return new Promise(function (resolve) {
+		matchAmount = matchAmount === undefined ? 10 : matchAmount;
+		offset      = offset === undefined ? 0 : offset;
+
+		return resolve({
+			path : 'getmatchesidbypublicid',
+			query: {
+				pid        : pid,
+				matchAmount: matchAmount,
+				offset     : offset
+			}
+		});
+	});
+};
+
+/**
+ * Return statistic of particular match by match_id
+ *
+ * @param {Number} matchId
+ * @param {String} [language]
+ */
+exports.getMatchStatistic = function (matchId, language) {
+	return new Promise(function (resolve) {
+		language = language === undefined ? 'english' : language;
+
+		return resolve({
+			path : 'getmatchstatisticbyid',
+			query: {
+				matchid : matchId,
+				language: language
+			}
+		});
+	});
+};
+
+/**
+ * Return all users data
+ *
+ * @param {String} pid
+ * @param {String} [language]
+ */
+exports.getUserData = function (pid, language) {
+	return new Promise(function (resolve, reject) {
+		language = language === undefined ? 'english' : language;
+
+		return resolve({
+			path : 'getuserdatabypid',
+			query: {
+				pid     : pid,
+				language: language
+			}
+		});
+	});
+};
+
+/**
+ * Return amount of active clans in Survarium
+ */
+exports.getClanAmounts = function () {
+	return new Promise(function (resolve) {
+		return resolve({
+			path: 'getclansamount'
+		});
+	});
+};
+
+/**
+ * Return list of the clan ids and names ordered by elo rating (begin from the top)
+ *
+ * @param amount
+ * @param offset
+ */
+exports.getClans = function (amount, offset) {
+	return new Promise(function (resolve) {
+		return resolve({
+			path : 'getclans',
+			query: {
+				amount: amount,
+				offset: offset
+			}
+		});
+	});
+};
+
+/**
+ * Return name, abbr, level, elo rating and pid of clan commander
+ *
+ * @param clanId
+ */
+exports.getClanInfo = function (clanId) {
+	return new Promise(function (resolve) {
+		return resolve({
+			path : 'getclaninfo',
+			query: {
+				clanid: clanId
+			}
+		});
+	});
+};
+
+/**
+ * Return members of given clan with their roles
+ *
+ * @param clanId
+ */
+exports.getClanMembers = function (clanId) {
+	return new Promise(function (resolve) {
+		return resolve({
+			path : 'getclanmembers',
+			query: {
+				clanid: clanId
+			}
+		});
+	});
+};
+
+/**
+ * @param language
+ */
+exports.getSlotsDict = function (language) {
+	return new Promise(function (resolve) {
+		return resolve({
+			path : 'getslotsdict',
+			query: {
+				language: language
+			}
+		});
+	});
+};
+
+/**
+ * @param language
+ */
+exports.getItemsDict = function (language) {
+	return new Promise(function (resolve) {
+		return resolve({
+			path : 'getitemsdict',
+			query: {
+				language: language
+			}
+		});
+	});
+};
+
+exports.getMapsDict = function (language) {
+	return new Promise(function (resolve) {
+		return resolve({
+			path : 'getmapsdict',
+			query: {
+				language: language
+			}
+		});
+	});
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getClanAmounts">getClanAmounts</a></li><li><a href="global.html#getClanInfo">getClanInfo</a></li><li><a href="global.html#getClanMembers">getClanMembers</a></li><li><a href="global.html#getClans">getClans</a></li><li><a href="global.html#getItemsDict">getItemsDict</a></li><li><a href="global.html#getMatchesIdByPublicId">getMatchesIdByPublicId</a></li><li><a href="global.html#getMatchStatistic">getMatchStatistic</a></li><li><a href="global.html#getMaxMatchId">getMaxMatchId</a></li><li><a href="global.html#getNicknamesByPublicIds">getNicknamesByPublicIds</a></li><li><a href="global.html#getPublicIdByNickname">getPublicIdByNickname</a></li><li><a href="global.html#getSlotsDict">getSlotsDict</a></li><li><a href="global.html#getUserData">getUserData</a></li><li><a href="global.html#matchesCountByPublicId">matchesCountByPublicId</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Dec 18 2015 02:47:24 GMT+0500 (YEKT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
