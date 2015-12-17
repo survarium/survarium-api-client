@@ -8,7 +8,7 @@
     "start": "./server/index.js",
     "deps": "npm i && (cd server && npm run deps)",
     "doc": "jsdoc -c .jsdoc.json",
-    "doc-pages": "find ./* -not \\( -name \"docs\" \\) | xargs rm -rf && git add docs && git push origin gh-pages"
+    "doc-pages": "find ./* -not \\( -name \"docs\" \\) | xargs rm -rf && git add . && git commit -am 'JSDoc up' && git push origin gh-pages"
   },
   "repository": {
     "type": "git",
