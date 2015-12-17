@@ -1,6 +1,6 @@
 module.exports = {
-	env: process.env.NODE_ENV || 'development',
-	handle: process.env.PORT  || 3005,
+	env: process.env.NODE_ENV  || 'development',
+	handle: process.env.LISTEN || 3005,
 
 	keys: {
 		public: 'test',
