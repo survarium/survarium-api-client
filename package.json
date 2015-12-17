@@ -1,0 +1,23 @@
+{
+  "name": "survarium-node",
+  "version": "0.0.0",
+  "description": "survarium api",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "./server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaseker/survarium-api.git"
+  },
+  "keywords": [
+    "survarium"
+  ],
+  "author": "Dmitry Vasilyev <vaseker@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vaseker/survarium-api/issues"
+  },
+  "homepage": "https://github.com/vaseker/survarium-api#readme"
+}
