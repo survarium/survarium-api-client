@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npm test",
     "start": "./server/index.js",
-    "deps": "npm i && (cd server && npm run deps)"
+    "deps": "npm i && (cd server && npm run deps)",
+    "doc": "jsdoc -c .jsdoc.json"
   },
   "repository": {
     "type": "git",

@@ -167,7 +167,7 @@ exports.getClans = function (amount, offset) {
 };
 
 /**
- * Return name, abbr, level. elo rating and pid of clan commander
+ * Return name, abbr, level, elo rating and pid of clan commander
  *
  * @param clanId
  */
