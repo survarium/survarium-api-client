@@ -4,8 +4,11 @@
 
 process.chdir(__dirname);
 
-const config  = require('./configs');
+
+const path    = require('path');
+const fs      = require('fs');
 const cluster = require('cluster');
+const config  = require('./configs');
 
 cluster.setupMaster({
 	exec: './worker.js',
