@@ -10,7 +10,7 @@ This is a port of initial [PHP-client](https://github.com/PhpSurvarium/Survarium
 * `nodejs >= 4`
 
 ## Setup
-* `git clone https://github.com/vaseker/survarium-api.git!`
+* `git clone https://github.com/vaseker/survarium-api.git`
 * `cd survarium-api`
 * `npm run deps`
 
