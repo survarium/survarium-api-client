@@ -1,6 +1,10 @@
 'use strict';
 
 (function (config) {
+	var language = config.storage.get(config.langStorageKey);
+	config.language = config.languages.indexOf(language) > -1 ?
+		language : config.languages[0];
+
 	$(document).ready(function () {
 
 		var main = $('#main');
@@ -63,6 +67,15 @@
 					died: 'Смертей',
 					kdRatio: 'K/D',
 					score: 'Счет'
+				},
+				english: {
+					title: 'Results',
+					team: 'Team',
+					nickname: 'Nickname',
+					kills: 'Kills',
+					died: 'Deaths',
+					kdRatio: 'K/D',
+					score: 'Score'
 				}
 			}[params.language];
 
@@ -164,6 +177,13 @@
 					time_start: 'Время начала матча',
 					duration: 'Продолжительность',
 					durationMetric: 'сек.'
+				},
+				english: {
+					id: 'ID',
+					replay: 'Download replay',
+					time_start: 'Time of match start',
+					duration: 'Match duration',
+					durationMetric: 'sec.'
 				}
 			}[params.language];
 
@@ -210,6 +230,11 @@
 					title: 'Поиск матча',
 					matchId: 'ID матча',
 					find: 'Найти'
+				},
+				english: {
+					title: 'Match search',
+					matchId: 'Match ID',
+					find: 'Find'
 				}
 			}[params.language];
 
@@ -266,6 +291,9 @@
 			var i18n = {
 				russian: {
 					title: 'Последний матч'
+				},
+				english: {
+					title: 'Latest match'
 				}
 			}[params.language];
 
@@ -304,6 +332,43 @@
 			};
 		})({ language: config.language, api: api });
 
+		var LangSwitcher = (function (params) {
+			var i18n = {
+				russian: {
+					russian: 'Русский',
+					english: 'English'
+				},
+				english: {
+					russian: 'Русский',
+					english: 'English'
+				}
+			}[params.language];
+
+			return function () {
+				var domElem = $('<div>', {
+					className: 'lang-switcher',
+					html: params.languages.map(function (lang) {
+						return `<a href="#!/${lang}" data-lang="${lang}" class="lang-switcher__elem">${i18n[lang]}</a>`;
+					}).join('&nbsp;|&nbsp;')
+				});
+
+				domElem.on('click', '.lang-switcher__elem', function (e) {
+					e.preventDefault();
+					var $this = $(this);
+					var lang  = $this.data('lang');
+					if (lang !== params.language) {
+						params.storage.set(params.langStorageKey, lang);
+						window.location.reload();
+					}
+				});
+
+				return domElem;
+			};
+		})({ language: config.language, languages: config.languages, storage: config.storage, langStorageKey: config.langStorageKey });
+
+		var langSwitcher = new LangSwitcher;
+		langSwitcher.prependTo(main);
+
 		var match = new Match;
 
 		var matchSearch = new MatchSearch({ match: match });
@@ -319,7 +384,8 @@
 	});
 })({
 	api: '/v1/cmd',
-	language: 'russian',
+	languages: ['russian', 'english'],
+	langStorageKey: 'language',
 	storage: {
 		get: localStorage.getItem.bind(localStorage),
 		set: localStorage.setItem.bind(localStorage)
