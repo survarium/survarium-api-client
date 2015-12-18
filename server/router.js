@@ -1,6 +1,10 @@
 'use strict';
 
-var router = require('express').Router();
+var path    = require('path');
+var express = require('express');
+var router  = express.Router();
+
+router.use('/public', express.static(path.join(__dirname, '..', 'static')));
 
 router.use(require('morgan')('dev')/*(':remote-addr :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] - :response-time ms ":referrer" ":user-agent"')*/);
 
