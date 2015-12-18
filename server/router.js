@@ -12,6 +12,8 @@ router.use('/public', express.static(path.join(__dirname, '..', 'static'), {
 router.use(require('morgan')(':remote-addr :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] - :response-time ms ":referrer" ":user-agent"'));
 
 router.get('/', function (req, res) {
+	return res.redirect('/public');
+
 	res.json({
 		api: req.protocol +
 		'://' +
