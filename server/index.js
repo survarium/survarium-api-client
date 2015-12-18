@@ -4,7 +4,6 @@
 
 process.chdir(__dirname);
 
-
 const path    = require('path');
 const fs      = require('fs');
 const cluster = require('cluster');
