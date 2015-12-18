@@ -80,6 +80,7 @@
 						var kill   = Number(player.kill);
 						var die    = Number(player.die);
 						var score  = Number(player.score);
+
 						return `<tr>
 							<td>${index + 1}</td>
 							<td>${nicknames[player.pid]}</td>
@@ -107,12 +108,12 @@
 							</table>
 						</div>`;
 				});
-				var html = `<table>
+
+				return `<table>
 					<tr>
 						<td>${result.join('</td><td>')}</td>
 					</tr>
 				</table>`;
-				return html;
 			};
 
 			var getIds = function (teams) {
