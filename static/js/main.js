@@ -31,10 +31,6 @@
 								id: result.match_id,
 								stats: result.stats
 							};
-						})
-						.then(function (info) {
-							console.log(info);
-							return info;
 						});
 				},
 				getNickNames: function (ids) {
@@ -207,6 +203,64 @@
 			};
 		})({ language: config.language });
 
+		var MatchSearch = (function (params) {
+			var i18n = {
+				russian: {
+					title: 'Поиск матча',
+					matchId: 'ID матча',
+					find: 'Найти'
+				}
+			}[params.language];
+
+			return function (options) {
+				var storageKey = 'match:search';
+
+				var domElem = $('<form>', {
+					html: `<h1>${i18n.title}</h1>
+						<div class="loading">Loading...</div>
+						<label>
+							${i18n.matchId}:
+							<input name="matchId" type="number" value="${params.storage.get(storageKey)}" />
+						</label>
+						<input type="submit" value="${i18n.find}" />`
+				});
+
+				var loader = domElem.find('.loading');
+				loader.detach();
+
+				var match;
+				if (options.match) {
+					match = options.match;
+				} else {
+					match = new Match;
+					match.appendTo(domElem);
+				}
+
+				domElem.on('submit', function (e) {
+					e.preventDefault();
+
+					var matchId = Number(this.matchId.value);
+
+					if (isNaN(matchId)) {
+						return console.error('wrong type of matchId');
+					}
+
+					params.storage.set(storageKey, matchId);
+
+					loader.appendTo(domElem);
+
+					params.api
+						.matchInfo(matchId)
+						.then(function (data) {
+							match.data('load')(data);
+							loader.detach();
+						});
+				});
+
+				return domElem;
+			};
+		})({ language: config.language, api: api, storage: config.storage });
+
 		var LatestMatch = (function (params) {
 			var i18n = {
 				russian: {
@@ -214,40 +268,59 @@
 				}
 			}[params.language];
 
-			return function () {
+			return function (options) {
 				var domElem = $('<div>', {
-					html: '<h1>' + i18n.title + '</h1>' +
+					html: '<h1 class="latestMatch__title">' + i18n.title + '</h1>' +
 					'<div class="loading">Loading...</div>'
 				});
 
+				var title  = domElem.find('.latestMatch__title');
 				var loader = domElem.find('.loading');
-				var match  = new Match;
 
-				match.appendTo(domElem);
+				var match;
+				if (options.match) {
+					match = options.match;
+				} else {
+					match = new Match;
+					match.appendTo(domElem);
+				}
 
 				domElem.data('load', function (data) {
 					loader.detach();
 					match.data('load')(data);
+					title.html(`${i18n.title}: ${data.id}`);
 					domElem.trigger('loaded');
 				}.bind(domElem));
 
 				params.api
 					.maxMatch()
 					.then(api.matchInfo)
-					.then(function (match) {
-						domElem.data('load')(match);
+					.then(function (data) {
+						domElem.data('load')(data);
 					});
 
 				return domElem;
 			};
 		})({ language: config.language, api: api });
 
-		var latestMatch = new LatestMatch;
+		var match = new Match;
+
+		var matchSearch = new MatchSearch({ match: match });
+
+		var latestMatch = new LatestMatch({ match: match });
 		latestMatch.appendTo(main);
+
+		matchSearch.appendTo(main);
+
+		match.appendTo(main);
 
 		main.find('> .loading').remove();
 	});
 })({
 	api: '/v1/cmd',
-	language: 'russian'
+	language: 'russian',
+	storage: {
+		get: localStorage.getItem.bind(localStorage),
+		set: localStorage.setItem.bind(localStorage)
+	}
 });
