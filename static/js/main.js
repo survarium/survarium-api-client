@@ -3,7 +3,8 @@
 (function (config) {
 	var language = config.storage.get(config.langStorageKey);
 	config.language = config.languages.indexOf(language) > -1 ?
-		language : config.languages[0];
+		language :
+		config.languages[0];
 
 	$(document).ready(function () {
 
@@ -80,6 +81,18 @@
 							return result.matches_count;
 						});
 				},
+				getMatchesIdByPublicId: function (pid, limit, skip) {
+					return $.ajax(config.api + '/getMatchesIdByPublicId', {
+							data: {
+								p1: pid,
+								p2: limit,
+								p3: skip
+							}
+						})
+						.then(function (result) {
+							return result.matches_ids;
+						});
+				},
 				/**
 				 * Double underscore-prefixed methods are not native
 				 */
@@ -88,7 +101,9 @@
 						.getPublicIdByNickname(nickname)
 						.then(function (pid) {
 							var defer = $.Deferred();
-							var result = {};
+							var result = {
+								pid: pid
+							};
 
 							var defers = [
 								function () {
@@ -314,6 +329,8 @@
 			}[params.language];
 
 			return function (options) {
+				options = options || {};
+
 				var storageKey = 'match:search';
 
 				var domElem = $('<form>', {
@@ -373,6 +390,8 @@
 			}[params.language];
 
 			return function (options) {
+				options = options || {};
+
 				var domElem = $('<div>', {
 					html: '<h1 class="latestMatch__title">' + i18n.title + '</h1>' +
 					'<div class="loading">Loading...</div>'
@@ -446,6 +465,108 @@
 				return domElem;
 			};
 		})({ language: config.language, languages: config.languages, storage: config.storage, langStorageKey: config.langStorageKey });
+
+		var Pagination = (function () {
+			return function () {
+				var domElem = $('<div>', {
+					className: 'pagination'
+				});
+
+				var total;
+				var limit;
+				var skip = 0;
+
+				domElem.data('build', function ($total, $limit, $skip) {
+					if (!$total || $total < 0 || !$limit || $limit < 0) {
+						return domElem.empty();
+					}
+
+					total = $total;
+					limit = $limit;
+
+					if ($skip < 0) {
+						$skip = 0;
+					}
+
+					skip = $skip;
+				});
+
+				return domElem;
+			}
+		})({ language: config.language });
+
+		var PlayerMatches = (function (params) {
+			var i18n = {
+				russian: {
+					title: 'Матчи'
+				},
+				english: {
+					title: 'Matches'
+				}
+			}[params.language];
+
+			var LIMIT = 25;
+
+			var tpl = function (data) {
+				return Object.keys(data).map(function (key) {
+					return `<li class="player-matches__item" data-id="${data[key]}">${data[key]}</li>`;
+				}).join('');
+			};
+
+			return function (options) {
+				options = options || {};
+
+				var domElem = $('<div>', {
+					className: 'player-matches',
+					html: `<h1>${i18n.title}</h1>
+						<ol class="player-matches__info"></ol>`
+				});
+
+				var info = domElem.find('.player-matches__info');
+
+				var match;
+				if (options.match) {
+					match = options.match;
+				} else {
+					match = new Match;
+					match.appendTo(domElem);
+				}
+
+				var pagination = new Pagination;
+				//pagination.appendTo(domElem);
+
+				var total = 0;
+				var pid;
+				var skip = 0;
+
+				domElem.data('load', function ($pid, $total) {
+					total = Number($total);
+					pid   = $pid;
+					skip  = 0;
+					params
+						.api
+						.getMatchesIdByPublicId(pid, LIMIT, skip)
+						.then(function (data) {
+							info.html(tpl(data));
+							//pagination.data('build')(total, LIMIT, skip);
+							domElem.trigger('loaded');
+						});
+				});
+
+				domElem.on('click', '.player-matches__item', function (e) {
+					e.preventDefault();
+					var $this = $(this);
+					var id = $this.data('id');
+					params.api
+						.matchInfo(id)
+						.then(function (data) {
+							match.data('load')(data);
+						});
+				});
+
+				return domElem;
+			};
+		})({ language: config.language, api: api });
 
 		var PlayerInfo = (function (params) {
 			var i18n = {
@@ -550,13 +671,27 @@
 				`;
 			};
 
-			return function () {
+			return function (options) {
+				options = options || {};
+
 				var domElem = $('<div>', {
-					className: 'player'
+					className: 'player',
+					html: '<div class="player__info"></div>'
 				});
 
+				var info = domElem.find('.player__info');
+
+				var matches;
+				if (options.matches) {
+					matches = options.matches;
+				} else {
+					matches = new PlayerMatches({ match: options.match });
+					matches.appendTo(domElem);
+				}
+
 				domElem.data('load', function (data) {
-					domElem.html(tpl(data));
+					info.html(tpl(data));
+					matches.data('load')(data.pid, data.matchCount);
 					domElem.trigger('loaded');
 				});
 
@@ -579,6 +714,8 @@
 			}[params.language];
 
 			return function (options) {
+				options = options || {};
+
 				var storageKey = 'player:search';
 
 				var domElem = $('<form>', {
@@ -637,7 +774,7 @@
 
 		var latestMatch = new LatestMatch({ match: match });
 
-		var playerInfo = new PlayerInfo;
+		var playerInfo = new PlayerInfo({ match: match });
 
 		var playerSearch = new PlayerSearch({ player: playerInfo });
 
