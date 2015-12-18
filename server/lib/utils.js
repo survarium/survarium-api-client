@@ -4,6 +4,8 @@ const qs     = require('querystring');
 const crypto = require('crypto');
 const config = require('../configs');
 
+const DEFAULT_LANG = 'english';
+
 /**
  * Generate random string for signature
  *
@@ -28,6 +30,37 @@ function makeUrl(params) {
 	return url;
 }
 
+var parseNum = (function () {
+	let test = /^\d+$/;
+	/**
+	 * There is no converting to Number because of UInt
+	 */
+	return function parseNum(id) {
+		if ([undefined, null].indexOf(id) > -1) {
+			throw new Error('no id received');
+		}
+
+		if (typeof id !== 'number') {
+			if (!test.test(id)) {
+				throw new Error('id must be a number');
+			}
+		}
+
+		if (isNaN(id)) {
+			throw new Error('id is incorrect');
+		}
+
+		return id;
+	};
+})();
+
+function lang(language) {
+	if ([undefined, null, ''].indexOf(language) > -1) {
+		return DEFAULT_LANG;
+	}
+	return language;
+}
+
 Object.defineProperties(module.exports, {
 	'salt': {
 		get: generateSalt,
@@ -40,3 +73,5 @@ Object.defineProperties(module.exports, {
 });
 
 module.exports.url = makeUrl;
+module.exports.parseNum = parseNum;
+module.exports.lang = lang;
