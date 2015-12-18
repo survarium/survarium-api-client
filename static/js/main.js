@@ -48,6 +48,79 @@
 						.then(function (result) {
 							return result.nicknames;
 						});
+				},
+				getPublicIdByNickname: function (nickname) {
+					return $.ajax(config.api + '/getPublicIdByNickname', {
+							data: {
+								nickname: nickname
+							}
+						})
+						.then(function (result) {
+							return result.pid;
+						});
+				},
+				getUserData: function (pid, language) {
+					return $.ajax(config.api + '/getUserData', {
+							data: {
+								p1: pid,
+								p2: language
+							}
+						})
+						.then(function (result) {
+							return result.userdata;
+						});
+				},
+				matchesCountByPublicId: function (pid) {
+					return $.ajax(config.api + '/matchesCountByPublicId', {
+							data: {
+								p1: pid
+							}
+						})
+						.then(function (result) {
+							return result.matches_count;
+						});
+				},
+				/**
+				 * Double underscore-prefixed methods are not native
+				 */
+				__getUserInfo: function (nickname, language) {
+					return this
+						.getPublicIdByNickname(nickname)
+						.then(function (pid) {
+							var defer = $.Deferred();
+							var result = {};
+
+							var defers = [
+								function () {
+									return this
+										.matchesCountByPublicId(pid)
+										.then(success('matchCount'))
+										.fail(defer.reject);
+								},
+								function () {
+									return this
+										.getUserData(pid, language)
+										.then(success('userData'))
+										.fail(defer.reject);
+								}
+							];
+							var deferAmount = defers.length;
+
+							function success(type) {
+								return function (data) {
+									result[type] = data;
+									if (!--deferAmount) {
+										return defer.resolve(result);
+									}
+								};
+							}
+
+							defers.forEach(function (deferred) {
+								return deferred.call(this);
+							}, this);
+
+							return defer.promise();
+						}.bind(this));
 				}
 			};
 		})($, config);
@@ -374,6 +447,187 @@
 			};
 		})({ language: config.language, languages: config.languages, storage: config.storage, langStorageKey: config.langStorageKey });
 
+		var PlayerInfo = (function (params) {
+			var i18n = {
+				russian: {
+					progress: 'Прогресс',
+					level: 'Уровень',
+					rating: 'Рейтинг',
+					exp: 'Опыт',
+					actions: 'Действия',
+					kills: 'Убийств',
+					deaths: 'Смертей',
+					kdRatio: 'K/D',
+					victories: 'Побед',
+					looses: 'Поражений',
+					totalMatches: 'Всего матчей',
+					totalMatchesCount: 'Всего матчей, включая матчи без статистики',
+					profile: 'Профиль',
+					ammunition: 'Аммуниция',
+					active: 'Активный'
+				},
+				english: {
+					progress: 'Progress',
+					level: 'Level',
+					rating: 'Rating',
+					exp: 'Experience',
+					actions: 'Actions',
+					kills: 'Kills',
+					deaths: 'Deaths',
+					kdRatio: 'K/D',
+					victories: 'Victories',
+					looses: 'Looses',
+					totalMatches: 'Total matches',
+					totalMatchesCount: 'Total matches count with no statistics included',
+					profile: 'Profile',
+					ammunition: 'Ammunition',
+					active: 'Active'
+				}
+			}[params.language];
+
+			var tplAmmunition = function (data) {
+				return Object.keys(data).reduce(function (result, i) {
+					var preset = data[i];
+					var active = preset.active;
+					delete preset.active;
+					var itemKeys = Object.keys(preset);
+					result[i18n.profile + ' ' + (Number(i) + 1) + (active ? ' (' + i18n.active.toLowerCase() + ')' : '')] = itemKeys.map(function (j) {
+						var item = preset[j];
+						return `${item.slot_name}: ${item.item_name}`;
+					});
+					return result;
+				}, {});
+			};
+
+			var tpl = function (data) {
+				var info = data.userData;
+				var stats = info.matches_stats;
+				var matchCount = Number(data.matchCount);
+
+				var kill   = Number(stats.kills);
+				var die    = Number(stats.dies);
+				var wins   = Number(stats.victories);
+				var total  = Number(stats.matches);
+
+				var ammunition = tplAmmunition(info.ammunition);
+
+				return `<h2>${info.nickname}</h2>
+					<h4>${i18n.progress}</h4>
+					<dl>
+					  <dt>${i18n.level}</dt>
+					  <dd>${info.progress.level}</dd>
+
+					  <dt>${i18n.rating}</dt>
+					  <dd>${info.progress.elo}</dd>
+
+					  <dt>${i18n.exp}</dt>
+					  <dd>${info.progress.experience}</dd>
+					</dl>
+
+					<h4>${i18n.actions}</h4>
+					<dl>
+					  <dt>${i18n.kills}</dt>
+					  <dd>${kill}</dd>
+
+					  <dt>${i18n.deaths}</dt>
+					  <dd>${die}</dd>
+
+					  <dt>${i18n.kdRatio}</dt>
+					  <dd>${kdRatio(kill, die)}</dd>
+
+					  <dt>${i18n.victories}</dt>
+					  <dd>${wins}</dd>
+
+					  <dt>${i18n.looses}</dt>
+					  <dd>${total - wins}</dd>
+
+					  <dt>${i18n.totalMatches}</dt>
+					  <dd>${total} (<abbr title="${i18n.totalMatchesCount}">${matchCount}</abbr>)</dd>
+					</dl>
+
+					<h4>${i18n.ammunition}</h4>
+					<pre>${JSON.stringify(ammunition, null, 4)}</pre>
+				`;
+			};
+
+			return function () {
+				var domElem = $('<div>', {
+					className: 'player'
+				});
+
+				domElem.data('load', function (data) {
+					domElem.html(tpl(data));
+					domElem.trigger('loaded');
+				});
+
+				return domElem;
+			};
+		})({ language: config.language, api: api });
+
+		var PlayerSearch = (function (params) {
+			var i18n = {
+				russian: {
+					title: 'Поиск игроков',
+					nickname: 'Ник игрока',
+					find: 'Найти'
+				},
+				english: {
+					title: 'Players search',
+					nickname: 'Nickname',
+					find: 'Find'
+				}
+			}[params.language];
+
+			return function (options) {
+				var storageKey = 'player:search';
+
+				var domElem = $('<form>', {
+					className: 'player-search',
+					html: `<h1>${i18n.title}</h1>
+						<div class="loading">Loading...</div>
+						<label>
+							${i18n.nickname}:
+							<input name="nickname" value="${params.storage.get(storageKey) || ''}" />
+						</label>
+						<input type="submit" value="${i18n.find}" />`
+				});
+
+				var loader = domElem.find('.loading');
+				loader.detach();
+
+				var player;
+				if (options.player) {
+					player = options.player;
+				} else {
+					player = new PlayerInfo;
+					player.appendTo(domElem);
+				}
+
+				domElem.on('submit', function (e) {
+					e.preventDefault();
+
+					var nickname = this.nickname.value;
+
+					if ([undefined, null, ''].indexOf(nickname) > -1) {
+						return console.error('wrong format of nickname');
+					}
+
+					params.storage.set(storageKey, nickname);
+
+					loader.appendTo(domElem);
+
+					params.api
+						.__getUserInfo(nickname, params.language)
+						.then(function (data) {
+							player.data('load')(data);
+							loader.detach();
+						});
+				});
+
+				return domElem;
+			};
+		})({ language: config.language, api: api, storage: config.storage });
+
 		var langSwitcher = new LangSwitcher;
 		langSwitcher.prependTo(main);
 
@@ -382,11 +636,20 @@
 		var matchSearch = new MatchSearch({ match: match });
 
 		var latestMatch = new LatestMatch({ match: match });
+
+		var playerInfo = new PlayerInfo;
+
+		var playerSearch = new PlayerSearch({ player: playerInfo });
+
 		latestMatch.appendTo(main);
 
 		matchSearch.appendTo(main);
 
 		match.appendTo(main);
+
+		playerSearch.appendTo(main);
+
+		playerInfo.appendTo(main);
 
 		main.find('> .loading').remove();
 	});

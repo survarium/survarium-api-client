@@ -26,6 +26,7 @@ exports.getMaxMatchId = function () {
  * @param {String} nickname Player nickname
  */
 exports.getPublicIdByNickname = function (nickname) {
+	// TODO: ĘŚĆ
 	return new Promise(function (resolve, reject) {
 		if (utils.isEmpty(nickname)) {
 			return reject(new Error('no nickname received'));
