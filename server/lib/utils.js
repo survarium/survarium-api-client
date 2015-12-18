@@ -54,11 +54,13 @@ var parseNum = (function () {
 	};
 })();
 
+function isEmpty(value) {
+	return [undefined, null, ''].indexOf(value) > -1;
+}
+
+
 function lang(language) {
-	if ([undefined, null, ''].indexOf(language) > -1) {
-		return DEFAULT_LANG;
-	}
-	return language;
+	return isEmpty(language) ? DEFAULT_LANG : language;
 }
 
 Object.defineProperties(module.exports, {
@@ -75,3 +77,4 @@ Object.defineProperties(module.exports, {
 module.exports.url = makeUrl;
 module.exports.parseNum = parseNum;
 module.exports.lang = lang;
+module.exports.isEmpty = isEmpty;

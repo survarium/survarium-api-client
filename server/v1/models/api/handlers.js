@@ -4,9 +4,9 @@ const Promise = require('bluebird');
 const utils   = require('../../../lib/utils');
 
 /**
- * Получить последний сыгранный в Survarium match_id
+ * Получить последний сыгранный в Survarium match_id.
  *
- * Return max match_id played in Survarium
+ * Return max match_id played in Survarium.
  *
  * param pid - not implemented and hasn't been ported // TODO: investigate getMaxMatchId(pid)
  */
@@ -19,15 +19,15 @@ exports.getMaxMatchId = function () {
 };
 
 /**
- * Получить PID игрока по его никнейму
+ * Получить PID игрока по его никнейму.
  *
- * Return users public account id by nickname
+ * Return users public account id by nickname.
  *
  * @param {String} nickname Player nickname
  */
 exports.getPublicIdByNickname = function (nickname) {
 	return new Promise(function (resolve, reject) {
-		if (!nickname) {
+		if (utils.isEmpty(nickname)) {
 			return reject(new Error('no nickname received'));
 		}
 
@@ -41,11 +41,11 @@ exports.getPublicIdByNickname = function (nickname) {
 };
 
 /**
- * Получить список никнеймов по массиву PID
+ * Получить список никнеймов по массиву PID.
  *
- * Return bunch of nicknames by array of public account ids
+ * Return bunch of nicknames by array of public account ids.
  *
- * @param {Array} pids Array of public ids
+ * @param {Array|String} pids Array of public ids or one PID
  */
 exports.getNicknamesByPublicIds = function (pids) {
 	return new Promise(function (resolve, reject) {
@@ -71,9 +71,9 @@ exports.getNicknamesByPublicIds = function (pids) {
 };
 
 /**
- * Получить суммарное количество сыгранных матчей указанным PID
+ * Получить суммарное количество сыгранных матчей указанным PID.
  *
- * Retrieve amount of played matches by user whose public account Id equals pid
+ * Retrieve amount of played matches by user whose public account Id equals pid.
  *
  * @param {String} pid  Public player ID
  */
@@ -82,20 +82,20 @@ exports.matchesCountByPublicId = function (pid) {
 		return resolve({
 			path : 'getmatchescountbypid',
 			query: {
-				pid: pid
+				pid: utils.parseNum(pid)
 			}
 		});
 	});
 };
 
 /**
- * Получить paginated список сыгранных матчей по PID игрока
+ * Получить paginated список сыгранных матчей по PID игрока.
  *
- * Return particular amount of played matches of user with public account id = pid
+ * Return particular amount of played matches of user with public account id = pid.
  *
- * @param  {String} pid             Public player ID
- * @param  {Number} [matchAmount]   Amount of matches to return (limited by 25)
- * @param  {Number} [offset]        Amount of entries to skip
+ * @param  {String} pid                 Public player ID
+ * @param  {Number} [matchAmount=10]    Amount of matches to return (limited by 25)
+ * @param  {Number} [offset=0]          Amount of entries to skip
  */
 exports.getMatchesIdByPublicId = function (pid, matchAmount, offset) {
 	return new Promise(function (resolve) {
@@ -114,12 +114,12 @@ exports.getMatchesIdByPublicId = function (pid, matchAmount, offset) {
 };
 
 /**
- * Получить статистику матча по его ID
+ * Получить статистику матча по его ID.
  *
- * Return statistic of particular match by match_id
+ * Return statistic of particular match by match_id.
  *
- * @param {Number} matchId      Match ID
- * @param {String} [language]   Results language
+ * @param {Number} matchId              Match ID
+ * @param {String} [language=english]   Results language
  */
 exports.getMatchStatistic = function (matchId, language) {
 	return new Promise(function (resolve) {
@@ -134,12 +134,12 @@ exports.getMatchStatistic = function (matchId, language) {
 };
 
 /**
- * Получить информацию об игроке: рейтинг, инвентарь по PID
+ * Получить информацию об игроке: рейтинг, инвентарь по PID.
  *
- * Return all user data: rating, inventory
+ * Return all user data: rating, inventory.
  *
- * @param {String} pid          Player ID
- * @param {String} [language]   Results language
+ * @param {String} pid                  Player ID
+ * @param {String} [language=english]   Results language
  */
 exports.getUserData = function (pid, language) {
 	return new Promise(function (resolve) {
@@ -154,9 +154,9 @@ exports.getUserData = function (pid, language) {
 };
 
 /**
- * Получить количество активных кланов в Survarium
+ * Получить количество активных кланов в Survarium.
  *
- * Return amount of active clans in Survarium
+ * Return amount of active clans in Survarium.
  */
 exports.getClanAmounts = function () {
 	return new Promise(function (resolve) {
@@ -167,12 +167,12 @@ exports.getClanAmounts = function () {
 };
 
 /**
- * Получить paginated список кланов, сортированных по ELO рейтингу (от большего к меньшему)
+ * Получить paginated список кланов, сортированных по ELO рейтингу (от большего к меньшему).
  *
- * Return list of the clan ids and names ordered by elo rating (begin from the top)
+ * Return list of the clan ids and names ordered by elo rating (begin from the top).
  *
- * @param {Number} [amount]     Amount of clans to fetch (limited by 25)
- * @param {Number} [offset]     Amount of skipped entities
+ * @param {Number} [amount=10]      Amount of clans to fetch (limited by 25)
+ * @param {Number} [offset=0]       Amount of skipped entities
  */
 exports.getClans = function (amount, offset) {
 	return new Promise(function (resolve) {
@@ -190,9 +190,9 @@ exports.getClans = function (amount, offset) {
 };
 
 /**
- * Получить информацию о клане по его ID (название, тег, уровень, рейтинг, PID командира)
+ * Получить информацию о клане по его ID (название, тег, уровень, рейтинг, PID командира).
  *
- * Return name, abbr, level, elo rating and pid of clan commander
+ * Return name, abbr, level, elo rating and pid of clan commander.
  *
  * @param {Number} clanId   ID of clan
  */
@@ -208,9 +208,9 @@ exports.getClanInfo = function (clanId) {
 };
 
 /**
- * Получить список участников клана с их званиями
+ * Получить список участников клана с их званиями.
  *
- * Return members of given clan with their roles
+ * Return members of given clan with their roles.
  *
  * @param {Number} clanId       ID of clan
  */
@@ -226,11 +226,11 @@ exports.getClanMembers = function (clanId) {
 };
 
 /**
- * Получить словарь игровых слотов
+ * Получить словарь игровых слотов.
  *
- * Return game slots dictionary
+ * Return game slots dictionary.
  *
- * @param {String} [language]   Dictionary language
+ * @param {String} [language=english]   Dictionary language
  */
 exports.getSlotsDict = function (language) {
 	return new Promise(function (resolve) {
@@ -244,11 +244,11 @@ exports.getSlotsDict = function (language) {
 };
 
 /**
- * Получить словарь игровых предметов
+ * Получить словарь игровых предметов.
  *
- * Return game items dictionary
+ * Return game items dictionary.
  *
- * @param {String} [language]   Dictionary language
+ * @param {String} [language=english]   Dictionary language
  */
 exports.getItemsDict = function (language) {
 	return new Promise(function (resolve) {
@@ -262,11 +262,11 @@ exports.getItemsDict = function (language) {
 };
 
 /**
- * Получить словарь карт
+ * Получить словарь карт.
  *
- * Return game maps dictionary
+ * Return game maps dictionary.
  *
- * @param {String} [language]   Dictionary language
+ * @param {String} [language=english]   Dictionary language
  */
 exports.getMapsDict = function (language) {
 	return new Promise(function (resolve) {
