@@ -108,9 +108,9 @@
 
 
 <div class="description">
-    Получить количество активных кланов в Survarium
+    Получить количество активных кланов в Survarium.
 
-Return amount of active clans in Survarium
+Return amount of active clans in Survarium.
 </div>
 
 
@@ -192,9 +192,9 @@ Return amount of active clans in Survarium
 
 
 <div class="description">
-    Получить информацию о клане по его ID (название, тег, уровень, рейтинг, PID командира)
+    Получить информацию о клане по его ID (название, тег, уровень, рейтинг, PID командира).
 
-Return name, abbr, level, elo rating and pid of clan commander
+Return name, abbr, level, elo rating and pid of clan commander.
 </div>
 
 
@@ -325,9 +325,9 @@ Return name, abbr, level, elo rating and pid of clan commander
 
 
 <div class="description">
-    Получить список участников клана с их званиями
+    Получить список участников клана с их званиями.
 
-Return members of given clan with their roles
+Return members of given clan with their roles.
 </div>
 
 
@@ -458,9 +458,9 @@ Return members of given clan with their roles
 
 
 <div class="description">
-    Получить paginated список кланов, сортированных по ELO рейтингу (от большего к меньшему)
+    Получить paginated список кланов, сортированных по ELO рейтингу (от большего к меньшему).
 
-Return list of the clan ids and names ordered by elo rating (begin from the top)
+Return list of the clan ids and names ordered by elo rating (begin from the top).
 </div>
 
 
@@ -487,6 +487,8 @@ Return list of the clan ids and names ordered by elo rating (begin from the top)
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -523,6 +525,12 @@ Return list of the clan ids and names ordered by elo rating (begin from the top)
             
 
             
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
 
             <td class="description last">Amount of clans to fetch (limited by 25)</td>
         </tr>
@@ -555,6 +563,12 @@ Return list of the clan ids and names ordered by elo rating (begin from the top)
                 </td>
             
 
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
             
 
             <td class="description last">Amount of skipped entities</td>
@@ -636,9 +650,9 @@ Return list of the clan ids and names ordered by elo rating (begin from the top)
 
 
 <div class="description">
-    Получить словарь игровых предметов
+    Получить словарь игровых предметов.
 
-Return game items dictionary
+Return game items dictionary.
 </div>
 
 
@@ -665,6 +679,8 @@ Return game items dictionary
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -700,6 +716,12 @@ Return game items dictionary
                 </td>
             
 
+            
+                <td class="default">
+                
+                    english
+                
+                </td>
             
 
             <td class="description last">Dictionary language</td>
@@ -781,9 +803,9 @@ Return game items dictionary
 
 
 <div class="description">
-    Получить словарь карт
+    Получить словарь карт.
 
-Return game maps dictionary
+Return game maps dictionary.
 </div>
 
 
@@ -810,6 +832,8 @@ Return game maps dictionary
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -845,6 +869,12 @@ Return game maps dictionary
                 </td>
             
 
+            
+                <td class="default">
+                
+                    english
+                
+                </td>
             
 
             <td class="description last">Dictionary language</td>
@@ -926,9 +956,9 @@ Return game maps dictionary
 
 
 <div class="description">
-    Получить paginated список сыгранных матчей по PID игрока
+    Получить paginated список сыгранных матчей по PID игрока.
 
-Return particular amount of played matches of user with public account id = pid
+Return particular amount of played matches of user with public account id = pid.
 </div>
 
 
@@ -955,6 +985,8 @@ Return particular amount of played matches of user with public account id = pid
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -989,6 +1021,10 @@ Return particular amount of played matches of user with public account id = pid
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Public player ID</td>
         </tr>
@@ -1022,6 +1058,12 @@ Return particular amount of played matches of user with public account id = pid
             
 
             
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
 
             <td class="description last">Amount of matches to return (limited by 25)</td>
         </tr>
@@ -1054,6 +1096,12 @@ Return particular amount of played matches of user with public account id = pid
                 </td>
             
 
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
             
 
             <td class="description last">Amount of entries to skip</td>
@@ -1135,9 +1183,9 @@ Return particular amount of played matches of user with public account id = pid
 
 
 <div class="description">
-    Получить статистику матча по его ID
+    Получить статистику матча по его ID.
 
-Return statistic of particular match by match_id
+Return statistic of particular match by match_id.
 </div>
 
 
@@ -1164,6 +1212,8 @@ Return statistic of particular match by match_id
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1198,6 +1248,10 @@ Return statistic of particular match by match_id
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Match ID</td>
         </tr>
@@ -1230,6 +1284,12 @@ Return statistic of particular match by match_id
                 </td>
             
 
+            
+                <td class="default">
+                
+                    english
+                
+                </td>
             
 
             <td class="description last">Results language</td>
@@ -1311,9 +1371,9 @@ Return statistic of particular match by match_id
 
 
 <div class="description">
-    Получить последний сыгранный в Survarium match_id
+    Получить последний сыгранный в Survarium match_id.
 
-Return max match_id played in Survarium
+Return max match_id played in Survarium.
 
 param pid - not implemented and hasn't been ported // TODO: investigate getMaxMatchId(pid)
 </div>
@@ -1397,9 +1457,9 @@ param pid - not implemented and hasn't been ported // TODO: investigate getMaxMa
 
 
 <div class="description">
-    Получить список никнеймов по массиву PID
+    Получить список никнеймов по массиву PID.
 
-Return bunch of nicknames by array of public account ids
+Return bunch of nicknames by array of public account ids.
 </div>
 
 
@@ -1442,6 +1502,9 @@ Return bunch of nicknames by array of public account ids
             
                 
 <span class="param-type">Array</span>
+|
+
+<span class="param-type">String</span>
 
 
             
@@ -1451,7 +1514,7 @@ Return bunch of nicknames by array of public account ids
 
             
 
-            <td class="description last">Array of public ids</td>
+            <td class="description last">Array of public ids or one PID</td>
         </tr>
 
     
@@ -1530,9 +1593,9 @@ Return bunch of nicknames by array of public account ids
 
 
 <div class="description">
-    Получить PID игрока по его никнейму
+    Получить PID игрока по его никнейму.
 
-Return users public account id by nickname
+Return users public account id by nickname.
 </div>
 
 
@@ -1663,9 +1726,9 @@ Return users public account id by nickname
 
 
 <div class="description">
-    Получить словарь игровых слотов
+    Получить словарь игровых слотов.
 
-Return game slots dictionary
+Return game slots dictionary.
 </div>
 
 
@@ -1692,6 +1755,8 @@ Return game slots dictionary
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1727,6 +1792,12 @@ Return game slots dictionary
                 </td>
             
 
+            
+                <td class="default">
+                
+                    english
+                
+                </td>
             
 
             <td class="description last">Dictionary language</td>
@@ -1808,9 +1879,9 @@ Return game slots dictionary
 
 
 <div class="description">
-    Получить информацию об игроке: рейтинг, инвентарь по PID
+    Получить информацию об игроке: рейтинг, инвентарь по PID.
 
-Return all user data: rating, inventory
+Return all user data: rating, inventory.
 </div>
 
 
@@ -1837,6 +1908,8 @@ Return all user data: rating, inventory
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1871,6 +1944,10 @@ Return all user data: rating, inventory
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Player ID</td>
         </tr>
@@ -1903,6 +1980,12 @@ Return all user data: rating, inventory
                 </td>
             
 
+            
+                <td class="default">
+                
+                    english
+                
+                </td>
             
 
             <td class="description last">Results language</td>
@@ -1984,9 +2067,9 @@ Return all user data: rating, inventory
 
 
 <div class="description">
-    Получить суммарное количество сыгранных матчей указанным PID
+    Получить суммарное количество сыгранных матчей указанным PID.
 
-Retrieve amount of played matches by user whose public account Id equals pid
+Retrieve amount of played matches by user whose public account Id equals pid.
 </div>
 
 
@@ -2127,7 +2210,7 @@ Retrieve amount of played matches by user whose public account Id equals pid
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Dec 18 2015 05:23:07 GMT+0500 (YEKT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Dec 18 2015 05:36:24 GMT+0500 (YEKT)
 </footer>
 
 <script> prettyPrint(); </script>
