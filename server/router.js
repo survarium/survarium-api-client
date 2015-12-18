@@ -2,7 +2,7 @@
 
 var router = require('express').Router();
 
-/*router.use(require('morgan')(':remote-addr :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] - :response-time ms ":referrer" ":user-agent"'));*/
+router.use(require('morgan')('dev')/*(':remote-addr :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] - :response-time ms ":referrer" ":user-agent"')*/);
 
 router.get('/', function (req, res) {
 	res.json({
