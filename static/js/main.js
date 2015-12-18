@@ -13,7 +13,9 @@
 			$.ajaxSetup({
 				dataType: 'json',
 				timeout: 5 * 1000,
-				error: console.error.bind(console)
+				error: function (err) {
+					console.error(err.responseJSON || err);
+				}
 			});
 
 			return {
@@ -314,15 +316,21 @@
 					match.appendTo(domElem);
 				}
 
+				var updateTitle = function (id) {
+					title.html(`${i18n.title}: ${id}`);
+					return id;
+				};
+
 				domElem.data('load', function (data) {
 					loader.detach();
+					updateTitle(data.id);
 					match.data('load')(data);
-					title.html(`${i18n.title}: ${data.id}`);
 					domElem.trigger('loaded');
 				}.bind(domElem));
 
 				params.api
 					.maxMatch()
+					.then(updateTitle)
 					.then(api.matchInfo)
 					.then(function (data) {
 						domElem.data('load')(data);
