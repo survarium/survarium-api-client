@@ -7,7 +7,10 @@ module.exports = function (err, req, res, next) {
 		if (config.env !== 'production') {
 			console.error(err.stack);
 		}
-		return res.send(err.message);
+		return res.json({
+			message: err.message,
+			status: res.statusCode
+		});
 	}
 	return next();
 };

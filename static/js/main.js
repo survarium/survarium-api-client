@@ -2,38 +2,164 @@
 
 (function (config) {
 	$(document).ready(function () {
-		$.ajaxSetup({
-			dataType: 'json',
-			timeout: 5 * 1000,
-			error: console.error.bind(console)
-		});
 
 		var main = $('#main');
 
-		var api = {
-			maxMatch: function () {
-				return $.ajax(config.api + '/getMaxMatchId')
-					.then(function (result) {
-						return result.max_match_id.api;
-					});
-			},
-			matchInfo: function (id) {
-				return $.ajax(config.api + '/getMatchStatistic', {
-						data: {
-							id: id,
-							lang: config.language
-						}
-					})
-					.then(function (result) {
-						return {
-							id: result.match_id,
-							stats: result.stats
-						};
-					});
-			}
+		var api = (function ($, config) {
+			$.ajaxSetup({
+				dataType: 'json',
+				timeout: 5 * 1000,
+				error: console.error.bind(console)
+			});
+
+			return {
+				maxMatch: function () {
+					return $.ajax(config.api + '/getMaxMatchId')
+						.then(function (result) {
+							return result.max_match_id.api;
+						});
+				},
+				matchInfo: function (id) {
+					return $.ajax(config.api + '/getMatchStatistic', {
+							data: {
+								id: id,
+								lang: config.language
+							}
+						})
+						.then(function (result) {
+							return {
+								id: result.match_id,
+								stats: result.stats
+							};
+						})
+						.then(function (info) {
+							console.log(info);
+							return info;
+						});
+				},
+				getNickNames: function (ids) {
+					return $.ajax(config.api + '/getNicknamesByPublicIds', {
+							data: {
+								ids: ids
+							}
+						})
+						.then(function (result) {
+							return result.nicknames;
+						});
+				}
+			};
+		})($, config);
+
+		var kdRatio = function (kill, die) {
+			return die ?
+				kill ? (kill / die).toFixed(1) :
+					-die:
+				kill;
 		};
 
-		var matchDescriptionTpl = (function (params) {
+		var MatchResults = (function (params) {
+			var i18n = {
+				russian: {
+					title: 'Результаты',
+					team: 'Команда',
+					nickname: 'Имя',
+					kills: 'Убийств',
+					died: 'Смертей',
+					kdRatio: 'K/D',
+					score: 'Счет'
+				}
+			}[params.language];
+
+			var tpl = function (data, nicknames) {
+				var teams = data.stats.accounts;
+				var result = ['0', '1'].map(function (teamNum) {
+					var team = teams[teamNum];
+
+					if (!team) {
+						return;
+					}
+
+					var tbody = Object.keys(team).map(function (i, index) {
+						var player = team[i];
+						var kill   = Number(player.kill);
+						var die    = Number(player.die);
+						var score  = Number(player.score);
+						return `<tr>
+							<td>${index + 1}</td>
+							<td>${nicknames[player.pid]}</td>
+							<td>${kill}</td>
+							<td>${die}</td>
+							<td>${kdRatio(kill, die)}</td>
+							<td>${score}</td>
+						</tr>`;
+					}).join('');
+
+					return `<div>
+							<h4>${i18n.team} ${+teamNum + 1}</h4>
+							<table>
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>${i18n.nickname}</th>
+										<th>${i18n.kills}</th>
+										<th>${i18n.died}</th>
+										<th>${i18n.kdRatio}</th>
+										<th>${i18n.score}</th>
+									</tr>
+								</thead>
+								<tbody>${tbody}</tbody>
+							</table>
+						</div>`;
+				});
+				var html = `<table>
+					<tr>
+						<td>${result.join('</td><td>')}</td>
+					</tr>
+				</table>`;
+				return html;
+			};
+
+			var getIds = function (teams) {
+				return ['0', '1'].reduce(function (ids, teamNum) {
+					var team = teams[teamNum];
+
+					if (!team) {
+						return ids;
+					}
+
+					return ids.concat(Object.keys(team).map(function (i) {
+						return team[i].pid;
+					}));
+				}, []);
+			};
+
+			return function () {
+				var domElem = $('<div>', {
+					html: '<h1>' + i18n.title + '</h1>' +
+					'<div class="loading">Loading...</div>'
+				});
+
+				var loader = domElem.find('.loading');
+
+				var body = $('<div>');
+				body.appendTo(domElem);
+
+				domElem.data('load', function (data) {
+					var ids = getIds(data.stats.accounts);
+					params.api
+						.getNickNames(ids)
+						.then(function (nicknames) {
+							loader.detach();
+							body.html(tpl(data, nicknames));
+							domElem.trigger('loaded');
+						});
+				}.bind(domElem));
+
+				return domElem;
+			};
+		})({ language: config.language, api: api });
+
+		var Match = (function (params) {
 			var i18n = {
 				russian: {
 					id: 'ID',
@@ -44,9 +170,9 @@
 				}
 			}[params.language];
 
-			return function (data) {
+			var tpl = function (data) {
 				var stats = data.stats;
-				var html = `<h3>${i18n.id} ${data.id}</h3>
+				return `<h3>${i18n.id} ${data.id}</h3>
 					<h4>${stats.name} (${stats.weather}) &mdash; ${stats.mode}</h4>
 					<small>
 						${i18n.time_start} ${stats.time_start},
@@ -55,7 +181,29 @@
 					<div>
 						<a href="http://${decodeURIComponent(stats.replay_path)}" target="_blank">${i18n.replay}</a>
 					</div>`;
-				return $(html);
+			};
+
+			return function () {
+				var domElem = $('<div>', {
+					html: '<div class="loading">Loading...</div>'
+				});
+
+				var loader = domElem.find('.loading');
+
+				var info = $('<div>');
+				info.appendTo(domElem);
+
+				var details = new MatchResults;
+				details.appendTo(domElem);
+
+				domElem.data('load', function (data) {
+					loader.detach();
+					info.html(tpl(data));
+					details.data('load')(data);
+					domElem.trigger('loaded');
+				}.bind(domElem));
+
+				return domElem;
 			};
 		})({ language: config.language });
 
@@ -72,9 +220,14 @@
 					'<div class="loading">Loading...</div>'
 				});
 
+				var loader = domElem.find('.loading');
+				var match  = new Match;
+
+				match.appendTo(domElem);
+
 				domElem.data('load', function (data) {
-					this.find('.loading').remove();
-					this.append(matchDescriptionTpl(data));
+					loader.detach();
+					match.data('load')(data);
 					domElem.trigger('loaded');
 				}.bind(domElem));
 
@@ -92,9 +245,7 @@
 		var latestMatch = new LatestMatch;
 		latestMatch.appendTo(main);
 
-		latestMatch.on('loaded', function () {
-			main.find('> .loading').remove();
-		});
+		main.find('> .loading').remove();
 	});
 })({
 	api: '/v1/cmd',
