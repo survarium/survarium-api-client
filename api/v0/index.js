@@ -7,8 +7,9 @@ const ask      = require('./lib/ask');
 /**
  * API client constructor
  * @param {Object} [params]
- * @param {String} [params.keyPub=test]  Public API key
- * @param {String} [params.keyPriv=test] Private API key
+ * @param {String} [params.keyPub=test]                   Public API key
+ * @param {String} [params.keyPriv=test]                  Private API key
+ * @param {String} [params.api=http://api.survarium.com/] API address
  * @constructor
 */
 var Api = function (params) {

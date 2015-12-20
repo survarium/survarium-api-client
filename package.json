@@ -7,7 +7,7 @@
     "test": "tape test tests/**/*.js | ./node_modules/.bin/tap-spec",
     "deps": "npm i && (cd server && npm run deps)",
     "doc": "jsdoc -c .jsdoc.json",
-    "doc-pages": "npm run doc && git add docs && git commit -am 'JSDoc up' && git push origin gh-pages"
+    "doc-pages": "npm run doc && git add docs && git commit -am 'JSDoc up' && git push -f origin gh-pages"
   },
   "repository": {
     "type": "git",
