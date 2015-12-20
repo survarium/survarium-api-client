@@ -10,10 +10,10 @@ This is a port of initial [PHP-client](https://github.com/PhpSurvarium/Survarium
 * `nodejs >= 4`
 
 ## Install
-Import it into your project via package.json `dependenicies`
+Import it into your project via package.json `dependencies`
 
 `"survarium-api-client": "git+https://github.com/vaseker/survarium-api-client.git"`
 
 ## Usage
 
-[See example](https://github.com/vaseker/survarium-api/blob/master/example/v0.js)
+[See example](https://github.com/vaseker/survarium-api-client/blob/master/example/v0.js)
