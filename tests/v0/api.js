@@ -99,7 +99,7 @@ test('api:v0:getMatchesIdByPublicId', function (t) {
 		.catch(t.fail.bind(null, 'should get matches by pid'))
 });
 
-test.skip('api:v0:getMatchStatistic', function (t) {
+test('api:v0:getMatchStatistic', function (t) {
 	t.plan(2);
 
 	api
