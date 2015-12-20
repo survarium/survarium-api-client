@@ -1,4 +1,4 @@
-# Survarium-api-client
+# Survarium-api-client  [![Build Status](https://travis-ci.org/vaseker/survarium-api-client.svg?branch=master)](https://travis-ci.org/vaseker/survarium-api-client)
 
 API client for [Survarium game](http://survarium.com).  
 This is a port of initial [PHP-client](https://github.com/PhpSurvarium/SurvariumAPI).
