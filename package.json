@@ -1,5 +1,5 @@
 {
-  "name": "survarium-api-clietn",
+  "name": "survarium-api-client",
   "version": "0.0.1",
   "description": "survarium game api client",
   "main": "index.js",
