@@ -1,18 +1,17 @@
 {
-  "name": "survarium-node",
+  "name": "survarium-api-clietn",
   "version": "0.0.0",
-  "description": "survarium api",
-  "main": "server/index.js",
+  "description": "survarium game api client",
+  "main": "index.js",
   "scripts": {
-    "test": "npm test",
-    "start": "./server/index.js",
+    "test": "tape test tests/**/*.js | ./node_modules/.bin/tap-spec",
     "deps": "npm i && (cd server && npm run deps)",
     "doc": "jsdoc -c .jsdoc.json",
     "doc-pages": "npm run doc && git add docs && git commit -am 'JSDoc up' && git push origin gh-pages"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vaseker/survarium-api.git"
+    "url": "git+https://github.com/vaseker/survarium-api-client.git"
   },
   "keywords": [
     "survarium"
@@ -20,7 +19,15 @@
   "author": "Dmitry Vasilyev <vaseker@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vaseker/survarium-api/issues"
+    "url": "https://github.com/vaseker/survarium-api-client/issues"
   },
-  "homepage": "https://github.com/vaseker/survarium-api#readme"
+  "homepage": "https://github.com/vaseker/survarium-api-client#readme",
+  "dependencies": {
+    "bluebird": "^3.1.1",
+    "got": "^5.2.1"
+  },
+  "devDependencies": {
+    "tap-spec": "^4.1.1",
+    "tape": "^4.2.2"
+  }
 }

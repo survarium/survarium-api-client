@@ -1,18 +1,19 @@
 # Survarium-api-client
 
-Statistics client based on API of [Survarium game](http://survarium.com).  
+API client for [Survarium game](http://survarium.com).  
 This is a port of initial [PHP-client](https://github.com/PhpSurvarium/SurvariumAPI).
 
 ## Docs
-[API handlers](http://vaseker.github.io/survarium-api/docs/global.html)
+[API handlers](http://vaseker.github.io/survarium-api-client/docs/global.html)
 
 ## Requirements
 * `nodejs >= 4`
 
-## Setup
-* `git clone https://github.com/vaseker/survarium-api.git`
-* `cd survarium-api`
-* `npm run deps`
+## Install
+Import it into your project via package.json `dependenicies`
 
-## Start
-`npm start`
+`"survarium-api-client": "git+https://github.com/vaseker/survarium-api-client.git"`
+
+## Usage
+
+[See example](https://github.com/vaseker/survarium-api/blob/master/example/v0.js)

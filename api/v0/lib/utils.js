@@ -2,7 +2,6 @@
 
 const qs     = require('querystring');
 const crypto = require('crypto');
-const config = require('../configs');
 
 const DEFAULT_LANG = 'english';
 
@@ -21,8 +20,8 @@ function ts() {
 	return Date.now() / 1000 >>> 0;
 }
 
-function makeUrl(params) {
-	var url = config.api + params.path;
+function makeUrl(api, params) {
+	var url = api + params.path;
 	var query = params.query;
 	if (query) {
 		url += '?' + qs.stringify(query);
