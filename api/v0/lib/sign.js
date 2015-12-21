@@ -19,7 +19,7 @@ Sign.prototype.make = function (params) {
 
 	let sign = signature.digest('base64');
 
-	let headers = this.headers = {
+	let headers = {
 		surv_consumer_key: this.keyPub,
 		surv_nonce: salt,
 		surv_signature: sign,
