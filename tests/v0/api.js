@@ -26,8 +26,14 @@ test('api:v0:getPublicIdByNickname', function (t) {
 	api
 		.getPublicIdByNickname({ nickname: 'vaseker' })
 		.then(function (result) {
-			t.equal(result.nickname, 'vaseker', 'should be proper nickname');
-			t.equal(result.pid,      '15238791817735151910', 'should be proper PID');
+			t.ok(result.amount > 0, 'should return results');
+			var found = false;
+			Object.keys(result.paids).forEach(function (nickname) {
+				if (nickname.toLowerCase() === 'vaseker' && result.paids[nickname] === '15238791817735151910') {
+					return found = true;
+				}
+			});
+			t.ok(found, 'should be proper nickname');
 		})
 		.catch(t.fail.bind(null, 'should get user information'));
 });
