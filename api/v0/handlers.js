@@ -12,7 +12,6 @@ exports.getMaxMatchId = function () {
 };
 
 exports.getPublicIdByNickname = function (params) {
-	// TODO: ĘŚĆ
 	return new Promise(function (resolve, reject) {
 		if (!params) {
 			return reject(new Error('no params received'));

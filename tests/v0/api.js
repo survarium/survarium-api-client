@@ -28,8 +28,8 @@ test('api:v0:getPublicIdByNickname', function (t) {
 		.then(function (result) {
 			t.ok(result.amount > 0, 'should return results');
 			var found = false;
-			Object.keys(result.paids).forEach(function (nickname) {
-				if (nickname.toLowerCase() === 'vaseker' && result.paids[nickname] === '15238791817735151910') {
+			Object.keys(result.result).forEach(function (nickname) {
+				if (nickname.toLowerCase() === 'vaseker' && result.result[nickname] === '15238791817735151910') {
 					return found = true;
 				}
 			});
