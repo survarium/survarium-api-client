@@ -169,9 +169,9 @@ Api.prototype.getClanMembers = function (params) {
 };
 
 /**
- * Получить лимитированный список матчей, прошедших с заданной даты
+ * Получить лимитированный список матчей, прошедших с заданной даты.
  *
- * Return limited matches list after timestamp
+ * Return limited matches list after timestamp.
  *
  * @param   {Object}   params
  * @param   {Number}   params.timestamp        Timestamp to search from
