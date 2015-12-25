@@ -27,6 +27,12 @@ function ask(params) {
 	})
 		.then(function (result) {
 			return result.body;
+		})
+		.catch(function (err) {
+			if (err instanceof got.ParseError) {
+				return { result: null };
+			}
+			throw err;
 		});
 }
 

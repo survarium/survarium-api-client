@@ -211,8 +211,8 @@ test('api:v0:getClanMembers', function (t) {
 
 	api
 		.getClanMembers()
-		.then(t.fail.bind(null, 'shoud reject without params'))
-		.catch(t.pass.bind(null, 'shoud reject without params'));
+		.then(t.fail.bind(null, 'should reject without params'))
+		.catch(t.pass.bind(null, 'should reject without params'));
 
 	api
 		.getClanMembers({ id: 2 })
@@ -223,6 +223,41 @@ test('api:v0:getClanMembers', function (t) {
 			t.ok(result.members[0].role_name, 'should be member\'s role');
 		})
 		.catch(t.fail.bind(null, 'should get clan members list'));
+});
+
+test('api:v0:getNewMatches', function (t) {
+	t.plan(13);
+
+	var jsDate = (new Date('2015-12-25 12:00:00')).getTime();
+	var date = jsDate / 1000 >>> 0;
+
+	api
+		.getNewMatches({ timestamp: jsDate, limit: 5 })
+		.then(function (result) {
+			let matches = result.matches;
+			let ids = Object.keys(matches);
+			t.equal(ids.length, 5, 'should be match list with correct limit');
+			ids.forEach(function (id) {
+				let val = matches[id];
+				t.false(isNaN(Number(id)), 'should be correct match id');
+				t.ok(Number(val) >= date, 'should be correct timestamp');
+			});
+		})
+		.catch(t.fail.bind(null, 'should be ok with js timestamp'));
+
+	api
+		.getNewMatches({ timestamp: date })
+		.then(function (result) {
+			let matches = result.matches;
+			let ids = Object.keys(matches);
+			t.equal(ids.length, 50, 'should be match list with default size');
+		})
+		.catch(t.fail.bind(null, 'should be ok with timestamp'));
+
+	api
+		.getNewMatches()
+		.then(t.fail.bind(null, 'should fail without timestamp'))
+		.catch(t.pass.bind(null, 'should fail without timestamp'));
 });
 
 test('api:v0:getSlotsDict', function (t) {

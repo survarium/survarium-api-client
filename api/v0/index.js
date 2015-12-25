@@ -169,6 +169,20 @@ Api.prototype.getClanMembers = function (params) {
 };
 
 /**
+ * Получить лимитированный список матчей, прошедших с заданной даты
+ *
+ * Return limited matches list after timestamp
+ *
+ * @param   {Object}   params
+ * @param   {Number}   params.timestamp        Timestamp to search from
+ * @param   {Number}   [params.limit=50]       Amount of matches to fetch
+ * @returns {Promise}
+ */
+Api.prototype.getNewMatches = function (params) {
+	return this.__handlers.getNewMatches(params).then(this._ask);
+};
+
+/**
  * Получить словарь игровых слотов.
  *
  * Return game slots dictionary.

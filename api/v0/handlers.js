@@ -62,16 +62,12 @@ exports.getNicknamesByPublicIds = function (params) {
 };
 
 exports.matchesCountByPublicId = function (params) {
-	return new Promise(function (resolve) {
+	return new Promise(function (resolve, reject) {
 		if (!params) {
 			return reject(new Error('no params received'));
 		}
 
-		var pid = utils.parseNum(params.pid);
-
-		if (!pid) {
-			return reject(new Error('no pid received'));
-		}
+		var pid = utils.parseNum(params.pid, 'pid');
 
 		return resolve({
 			path : 'getmatchescountbypid',
@@ -83,16 +79,12 @@ exports.matchesCountByPublicId = function (params) {
 };
 
 exports.getMatchesIdByPublicId = function (params) {
-	return new Promise(function (resolve) {
+	return new Promise(function (resolve, reject) {
 		if (!params) {
 			return reject(new Error('no params received'));
 		}
 
-		var pid = utils.parseNum(params.pid);
-
-		if (!pid) {
-			return reject(new Error('no pid received'))
-		}
+		var pid = utils.parseNum(params.pid, 'pid');
 
 		var matchAmount = params.matchAmount === undefined  ? 10 : utils.parseNum(params.matchAmount);
 		var offset      = params.offset === undefined       ? 0  : utils.parseNum(params.offset);
@@ -109,16 +101,12 @@ exports.getMatchesIdByPublicId = function (params) {
 };
 
 exports.getMatchStatistic = function (params) {
-	return new Promise(function (resolve) {
+	return new Promise(function (resolve, reject) {
 		if (!params) {
 			return reject(new Error('no params received'));
 		}
 
 		var id = utils.parseNum(params.id);
-
-		if (!id) {
-			return reject(new Error('no id received'))
-		}
 
 		return resolve({
 			path : 'getmatchstatisticbyid',
@@ -131,16 +119,12 @@ exports.getMatchStatistic = function (params) {
 };
 
 exports.getUserData = function (params) {
-	return new Promise(function (resolve) {
+	return new Promise(function (resolve, reject) {
 		if (!params) {
 			return reject(new Error('no params received'));
 		}
 
-		var pid = utils.parseNum(params.pid);
-
-		if (!pid) {
-			return reject(new Error('no pid received'))
-		}
+		var pid = utils.parseNum(params.pid, 'pid');
 
 		return resolve({
 			path : 'getuserdatabypid',
@@ -177,16 +161,12 @@ exports.getClans = function (params) {
 };
 
 exports.getClanInfo = function (params) {
-	return new Promise(function (resolve) {
+	return new Promise(function (resolve, reject) {
 		if (!params) {
 			return reject(new Error('no params received'));
 		}
 
 		var id = utils.parseNum(params.id);
-
-		if (!id) {
-			return reject(new Error('no id received'))
-		}
 
 		return resolve({
 			path : 'getclaninfo',
@@ -198,21 +178,41 @@ exports.getClanInfo = function (params) {
 };
 
 exports.getClanMembers = function (params) {
-	return new Promise(function (resolve) {
+	return new Promise(function (resolve, reject) {
 		if (!params) {
 			return reject(new Error('no params received'));
 		}
 
 		var id = utils.parseNum(params.id);
 
-		if (!id) {
-			return reject(new Error('no id received'))
-		}
-
 		return resolve({
 			path : 'getclanmembers',
 			query: {
 				clanid: id
+			}
+		});
+	});
+};
+
+exports.getNewMatches = function (params) {
+	return new Promise(function (resolve) {
+		params = params || {};
+
+		var timestamp = utils.parseNum(params.timestamp, 'timestamp');
+
+		timestamp = String(timestamp);
+
+		if (timestamp.length > 10) {
+			timestamp = timestamp.slice(0, 10);
+		}
+
+		var limit = params.limit === undefined ? 50 : utils.parseNum(params.limit, 'limit');
+
+		return resolve({
+			path : 'getnewmatchesfrom',
+			query: {
+				timestamp: timestamp,
+				limit: limit
 			}
 		});
 	});

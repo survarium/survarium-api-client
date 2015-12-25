@@ -34,19 +34,20 @@ var parseNum = (function () {
 	/**
 	 * There is no converting to Number because of UInt
 	 */
-	return function parseNum(id) {
+	return function parseNum(id, name) {
+		name = name || 'id';
 		if ([undefined, null].indexOf(id) > -1) {
-			throw new Error('no id received');
+			throw new Error(`no ${name} received`);
 		}
 
 		if (typeof id !== 'number') {
 			if (!test.test(id)) {
-				throw new Error('id must be a number');
+				throw new Error(`${name} must be a number`);
 			}
 		}
 
 		if (isNaN(id)) {
-			throw new Error('id is incorrect');
+			throw new Error(`${name} is incorrect`);
 		}
 
 		return id;
