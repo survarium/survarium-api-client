@@ -30,7 +30,7 @@ function ask(params) {
 		})
 		.catch(function (err) {
 			if (err instanceof got.ParseError) {
-				return { result: null };
+				return null;
 			}
 			throw err;
 		});
