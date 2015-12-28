@@ -1,4 +1,5 @@
 const got = require('got');
+const parseJson = require('parse-json');
 
 const utils = require('./utils');
 
@@ -17,7 +18,6 @@ function ask(params) {
 
 	return got(url, {
 		method: method,
-		json: true,
 		timeout: 5 * 1000,
 		headers: {
 			'user-agent': 'Survarium browser',
@@ -26,12 +26,21 @@ function ask(params) {
 		}
 	})
 		.then(function (result) {
-			return result.body;
+			var body = result.body;
+			try {
+				return parseJson(body);
+			} catch (e) {
+				var error = new got.ParseError(e, {
+					host: result.socket._host,
+					hostname: result.socket._host,
+					method: result.socket.method,
+					path: result.socket.path
+				});
+				error.response = body;
+				throw error;
+			}
 		})
 		.catch(function (err) {
-			if (err instanceof got.ParseError) {
-				return null;
-			}
 			throw err;
 		});
 }
