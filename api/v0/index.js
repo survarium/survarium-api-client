@@ -1,5 +1,6 @@
 'use strict';
 
+const Promise  = require('bluebird');
 const handlers = require('./handlers');
 const Sign     = require('./lib/sign');
 const ask      = require('./lib/ask');
@@ -21,7 +22,27 @@ var Api = function (params) {
 	this.__handlers = handlers;
 
 	this._sign = new Sign({ keyPriv: this.keyPriv, keyPub: this.keyPub });
-	this._ask  = ask.bind(this);
+};
+
+/**
+ * Query executor
+ * @param {Object} [params]         API query params
+ * @param {Object} [options]        Quering options
+ * @param {Object} [options.delay]  delay in ms before executing query
+ * @returns {function(ask)}
+ * @private
+ */
+Api.prototype._ask = function (params, options) {
+	var _ask  = ask.bind(this);
+	if (!options) {
+		return _ask;
+	}
+	if (options.delay) {
+		return function (query) {
+			return Promise.delay(options.delay, query).then(_ask);
+		};
+	}
+	return _ask;
 };
 
 /**
@@ -33,7 +54,7 @@ var Api = function (params) {
  * @returns {Promise}
 */
 Api.prototype.getMaxMatchId = function () {
-	return this.__handlers.getMaxMatchId().then(this._ask);
+	return this.__handlers.getMaxMatchId().then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -46,7 +67,7 @@ Api.prototype.getMaxMatchId = function () {
  * @returns {Promise}
  */
 Api.prototype.getPublicIdByNickname = function (params) {
-	return this.__handlers.getPublicIdByNickname(params).then(this._ask);
+	return this.__handlers.getPublicIdByNickname(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -59,7 +80,7 @@ Api.prototype.getPublicIdByNickname = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getNicknamesByPublicIds = function (params) {
-	return this.__handlers.getNicknamesByPublicIds(params).then(this._ask);
+	return this.__handlers.getNicknamesByPublicIds(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -72,7 +93,7 @@ Api.prototype.getNicknamesByPublicIds = function (params) {
  * @returns {Promise}
  */
 Api.prototype.matchesCountByPublicId = function (params) {
-	return this.__handlers.matchesCountByPublicId(params).then(this._ask);
+	return this.__handlers.matchesCountByPublicId(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -87,7 +108,7 @@ Api.prototype.matchesCountByPublicId = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getMatchesIdByPublicId = function (params) {
-	return this.__handlers.getMatchesIdByPublicId(params).then(this._ask);
+	return this.__handlers.getMatchesIdByPublicId(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -101,7 +122,7 @@ Api.prototype.getMatchesIdByPublicId = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getMatchStatistic = function (params) {
-	return this.__handlers.getMatchStatistic(params).then(this._ask);
+	return this.__handlers.getMatchStatistic(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -115,7 +136,7 @@ Api.prototype.getMatchStatistic = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getUserData = function (params) {
-	return this.__handlers.getUserData(params).then(this._ask);
+	return this.__handlers.getUserData(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -125,7 +146,7 @@ Api.prototype.getUserData = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getClanAmounts = function () {
-	return this.__handlers.getClanAmounts().then(this._ask);
+	return this.__handlers.getClanAmounts().then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -139,7 +160,7 @@ Api.prototype.getClanAmounts = function () {
  * @returns {Promise}
  */
 Api.prototype.getClans = function (params) {
-	return this.__handlers.getClans(params).then(this._ask);
+	return this.__handlers.getClans(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -152,7 +173,7 @@ Api.prototype.getClans = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getClanInfo = function (params) {
-	return this.__handlers.getClanInfo(params).then(this._ask);
+	return this.__handlers.getClanInfo(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -165,7 +186,7 @@ Api.prototype.getClanInfo = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getClanMembers = function (params) {
-	return this.__handlers.getClanMembers(params).then(this._ask);
+	return this.__handlers.getClanMembers(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -179,7 +200,7 @@ Api.prototype.getClanMembers = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getNewMatches = function (params) {
-	return this.__handlers.getNewMatches(params).then(this._ask);
+	return this.__handlers.getNewMatches(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -192,7 +213,7 @@ Api.prototype.getNewMatches = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getSlotsDict = function (params) {
-	return this.__handlers.getSlotsDict(params).then(this._ask);
+	return this.__handlers.getSlotsDict(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -205,7 +226,7 @@ Api.prototype.getSlotsDict = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getItemsDict = function (params) {
-	return this.__handlers.getItemsDict(params).then(this._ask);
+	return this.__handlers.getItemsDict(params).then(this._ask.apply(this, arguments));
 };
 
 /**
@@ -218,7 +239,7 @@ Api.prototype.getItemsDict = function (params) {
  * @returns {Promise}
  */
 Api.prototype.getMapsDict = function (params) {
-	return this.__handlers.getMapsDict(params).then(this._ask);
+	return this.__handlers.getMapsDict(params).then(this._ask.apply(this, arguments));
 };
 
 module.exports = Api;

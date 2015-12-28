@@ -13,10 +13,11 @@ test('api:v0:getMaxMatchId', function (t) {
 		.then(t.ok)
 		.catch(t.fail)
 		.then(t.end);
+
 });
 
 test('api:v0:getPublicIdByNickname', function (t) {
-	t.plan(3);
+	t.plan(4);
 
 	api
 		.getPublicIdByNickname()
@@ -36,6 +37,14 @@ test('api:v0:getPublicIdByNickname', function (t) {
 			t.ok(found, 'should be proper nickname');
 		})
 		.catch(t.fail.bind(null, 'should get user information'));
+
+	var time = process.hrtime();
+	api
+		.getPublicIdByNickname({ nickname: 'vaseker' }, { delay: 1000 })
+		.then(function () {
+			t.ok(process.hrtime(time)[0] >= 1, 'should be executed with delay');
+		})
+	.catch(t.fail.bind(null, 'should be executed with delay'));
 });
 
 test('api:v0:getNicknamesByPublicIds', function (t) {
@@ -138,9 +147,8 @@ test('api:v0:getUserData', function (t) {
 
 			t.equal(result.pid, pid, 'should be equal pid');
 			t.equal(data.nickname.toLowerCase(), 'vaseker', 'shoud be correct user');
-
 			t.ok(data.progress, 'should be progress');
-			t.ok(data.ammunition, 'should be ammunition');
+			t.ok([undefined, null].indexOf(data.ammunition) === -1, 'should be ammunition'); // ammunition can be false before patch apply
 			t.ok(data.matches_stats, 'should be matches_stats');
 
 			t.ok(Number(data.progress.level) >= 70, 'should be proper level');
