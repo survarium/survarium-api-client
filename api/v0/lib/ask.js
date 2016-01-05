@@ -1,6 +1,7 @@
 const got = require('got');
 const parseJson = require('parse-json');
 const debug = require('debug')('survarium-api-client');
+const Promise = require('bluebird');
 
 const utils = require('./utils');
 
