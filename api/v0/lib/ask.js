@@ -1,5 +1,6 @@
 const got = require('got');
 const parseJson = require('parse-json');
+const debug = require('debug')('survarium-api-client');
 
 const utils = require('./utils');
 
@@ -23,7 +24,9 @@ function ask(params) {
 			if (iter > 5) {
 				return 0;
 			}
-			return 200 + Math.pow(2, iter) + Math.random() * 100;
+			var timeout = 200 + Math.pow(2, iter) + Math.random() * 100;
+			debug(`retry ${iter} ${url}`);
+			return timeout;
 		},
 		headers: {
 			'user-agent': 'Survarium browser',

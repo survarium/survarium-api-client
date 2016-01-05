@@ -1,6 +1,6 @@
 {
   "name": "survarium-api-client",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "survarium game api client",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/vaseker/survarium-api-client#readme",
   "dependencies": {
     "bluebird": "^3.1.1",
+    "debug": "^2.2.0",
     "got": "^5.2.1",
     "parse-json": "^2.2.0"
   },
