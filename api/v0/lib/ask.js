@@ -23,7 +23,7 @@ function ask(params) {
 			if (iter > 5) {
 				return 0;
 			}
-			return 200;
+			return 200 + Math.pow(2, iter) + Math.random() * 100;
 		},
 		headers: {
 			'user-agent': 'Survarium browser',
