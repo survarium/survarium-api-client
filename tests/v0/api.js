@@ -303,3 +303,29 @@ test('api:v0:getMapsDict', function (t) {
 		})
 		.catch(t.fail.bind(null, 'should get maps dictionary'));
 });
+
+test.only('api:v0:getUserSkills', t => {
+	t.plan(4);
+
+	let pid = '15238791817735151910';
+	api
+		.getUserSkills({ pid: pid })
+		.then(result => {
+			t.equal(result.pid, pid, 'should be equal pid');
+			t.ok(result.skills, 'should be skills set');
+			let skills = result.skills;
+			let keysOk = true;
+			let valsOk = true;
+			Object.keys(skills).forEach(function (skillId) {
+				if (!skillId.match(/^\d+$/)) {
+					keysOk = false;
+				}
+				if (!skills[skillId].match(/^\d+$/)) {
+					valsOk = false;
+				}
+			});
+			t.ok(keysOk, 'should be numeric skill ids');
+			t.ok(valsOk, 'should be numeric skill levels');
+		})
+		.catch(t.fail.bind(null, 'should get user skills'));
+});

@@ -141,6 +141,19 @@ Api.prototype.getUserData = function (params) {
 };
 
 /**
+ * Получить информацию о прокачке игрока.
+ *
+ * Return user skill points.
+ *
+ * @param   {Object}   params
+ * @param   {String}   params.pid                  Player ID
+ * @returns {Promise}
+ */
+Api.prototype.getUserSkills = function (params) {
+	return this.wrap.call(this, 'getUserSkills', arguments);
+};
+
+/**
  * Получить количество активных кланов в Survarium.
  *
  * Return amount of active clans in Survarium.

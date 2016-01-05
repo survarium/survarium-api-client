@@ -253,3 +253,19 @@ exports.getMapsDict = function (params) {
 		});
 	});
 };
+
+exports.getUserSkills = function (params) {
+	return new Promise(function (resolve) {
+		if (!params) {
+			return reject(new Error('no params received'));
+		}
+
+		var pid = utils.parseNum(params.pid, 'pid');
+		return resolve({
+			path : 'getuserskills',
+			query: {
+				pid: pid
+			}
+		});
+	});
+};
