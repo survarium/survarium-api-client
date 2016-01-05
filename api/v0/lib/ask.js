@@ -32,12 +32,13 @@ function ask(params) {
 	var retries = 0;
 
 	var retry = function (err) {
-		if (retries > 5) {
+		if (retries > 10) {
 			throw err;
 		}
-		debug(`retry #${retries} ${url}`);
+		var delay = 200 + Math.pow(2, retries++) + Math.random() * 100;
+		debug(`retry #${retries} in ${delay}ms ${url}`);
 		return new Promise
-			.delay(200 + Math.pow(2, retries++) + Math.random() * 100, options)
+			.delay(delay, options)
 			.then(got.bind(got, url))
 			.catch(retry);
 	};
