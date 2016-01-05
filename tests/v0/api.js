@@ -304,7 +304,7 @@ test('api:v0:getMapsDict', function (t) {
 		.catch(t.fail.bind(null, 'should get maps dictionary'));
 });
 
-test.only('api:v0:getUserSkills', t => {
+test('api:v0:getUserSkills', t => {
 	t.plan(4);
 
 	let pid = '15238791817735151910';

@@ -17,41 +17,51 @@ function ask(params) {
 		method: method
 	});
 
-	return got(url, {
+	var options = {
 		method: method,
 		timeout: 5 * 1000,
-		retries: function (iter) {
-			if (iter > 5) {
-				return 0;
-			}
-			var timeout = 200 + Math.pow(2, iter) + Math.random() * 100;
-			debug(`retry ${iter} ${url}`);
-			return timeout;
-		},
+		retries: 0,
 		headers: {
 			'user-agent': 'Survarium browser',
 			'encoding': 'gzip',
 			'authorization': auth.header
 		}
-	})
-		.then(function (result) {
-			var body = result.body;
-			try {
-				return parseJson(body);
-			} catch (e) {
-				var error = new got.ParseError(e, {
-					host: result.socket._host,
-					hostname: result.socket._host,
-					method: result.socket.method,
-					path: result.socket.path
-				});
-				error.response = body;
-				throw error;
-			}
-		})
-		.catch(function (err) {
+	};
+
+	var retries = 0;
+
+	var retry = function (err) {
+		if (retries > 5) {
 			throw err;
-		});
+		}
+		debug(`retry #${retries} ${url}`);
+		return new Promise
+			.delay(200 + Math.pow(2, retries++) + Math.random() * 100, options)
+			.then(got.bind(got, url))
+			.catch(retry);
+	};
+
+	var run = function () {
+		return got(url, options)
+			.catch(retry)
+			.then(function (result) {
+				var body = result.body;
+				try {
+					return parseJson(body);
+				} catch (e) {
+					var error = new got.ParseError(e, {
+						host: result.socket._host,
+						hostname: result.socket._host,
+						method: result.socket.method,
+						path: result.socket.path
+					});
+					error.response = body;
+					throw error;
+				}
+			});
+	};
+
+	return run();
 }
 
 module.exports = ask;
