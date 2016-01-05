@@ -19,7 +19,12 @@ function ask(params) {
 	return got(url, {
 		method: method,
 		timeout: 5 * 1000,
-		retries: 0,
+		retries: function (iter) {
+			if (iter > 5) {
+				return 0;
+			}
+			return 200;
+		},
 		headers: {
 			'user-agent': 'Survarium browser',
 			'encoding': 'gzip',
