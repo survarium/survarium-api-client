@@ -10,6 +10,9 @@ const utils = require('./utils');
  * @private
  */
 function ask(params) {
+	var opts = this.options;
+	var retriesLimit = opts.retries || 10;
+
 	var url = utils.url(this.api, params);
 	var method = 'GET';
 
@@ -32,10 +35,10 @@ function ask(params) {
 	var retries = 0;
 
 	var retry = function (err) {
-		if (retries > 10 || (err && err.statusCode > 199 && err.statusCode < 500 && err.statusCode !== 429)) {
+		if (retries > retriesLimit || (err && err.statusCode > 199 && err.statusCode < 500 && err.statusCode !== 429)) {
 			throw err;
 		}
-		var delay = (200 + Math.pow(2, retries++) + Math.random() * 100) >>> 0;
+		var delay = (200 + Math.pow(3, retries++) + Math.random() * 100) >>> 0;
 		debug(`${err && err.statusCode && err.statusCode + ' ' || ''}retry #${retries} in ${delay}ms ${url}`);
 		return new Promise
 			.delay(delay, options)

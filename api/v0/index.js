@@ -11,10 +11,13 @@ const ask      = require('./lib/ask');
  * @param {String} [params.keyPub=test]                   Public API key
  * @param {String} [params.keyPriv=test]                  Private API key
  * @param {String} [params.api=http://api.survarium.com/] API address
+ * @param {Object} [options]
+ * @param {Number} [options.retries]                      Amount of retries
  * @constructor
 */
-var Api = function (params) {
+var Api = function (params, options) {
 	params = params || {};
+	this.options = options || {};
 	this.keyPub  = params.keyPub  || 'test';
 	this.keyPriv = params.keyPriv || 'test';
 	this.api     = params.api     || 'http://api.survarium.com/';
