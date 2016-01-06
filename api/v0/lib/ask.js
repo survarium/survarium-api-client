@@ -36,7 +36,7 @@ function ask(params) {
 			throw err;
 		}
 		var delay = (200 + Math.pow(2, retries++) + Math.random() * 100) >>> 0;
-		debug(`retry #${retries} in ${delay}ms ${url}`);
+		debug(`${err && err.statusCode && err.statusCode + ' ' || ''}retry #${retries} in ${delay}ms ${url}`);
 		return new Promise
 			.delay(delay, options)
 			.then(got.bind(got, url))
