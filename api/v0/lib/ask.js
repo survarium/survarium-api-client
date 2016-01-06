@@ -32,7 +32,7 @@ function ask(params) {
 	var retries = 0;
 
 	var retry = function (err) {
-		if (retries > 10 || (err && (err.statusCode !== 429 || (err.statusCode > 199 && err.statusCode < 500)))) {
+		if (retries > 10 || (err && err.statusCode > 199 && err.statusCode < 500 && err.statusCode !== 429)) {
 			throw err;
 		}
 		var delay = (200 + Math.pow(2, retries++) + Math.random() * 100) >>> 0;
