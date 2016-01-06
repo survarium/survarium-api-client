@@ -38,7 +38,7 @@ function ask(params) {
 		if (retries > retriesLimit || (err && err.statusCode > 199 && err.statusCode < 500 && err.statusCode !== 429)) {
 			throw err;
 		}
-		var delay = (200 + Math.pow(3, retries++) + Math.random() * 100) >>> 0;
+		var delay = (200 * retries++ *  Math.random()) >>> 0;
 		debug(`${err && err.statusCode && '[' + err.statusCode + '] ' || ''}retry #${retries} in ${delay}ms ${url}`);
 		return new Promise
 			.delay(delay, options)
