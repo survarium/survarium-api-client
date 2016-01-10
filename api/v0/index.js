@@ -214,6 +214,7 @@ Api.prototype.getClanMembers = function (params) {
  * @param   {Object}   params
  * @param   {Number}   params.timestamp        Timestamp to search from
  * @param   {Number}   [params.limit=50]       Amount of matches to fetch
+ * @param   {Number}   [params.offset=50]      Amount of matches to skip
  * @returns {Promise}
  */
 Api.prototype.getNewMatches = function (params) {
