@@ -206,13 +206,15 @@ exports.getNewMatches = function (params) {
 			timestamp = timestamp.slice(0, 10);
 		}
 
-		var limit = params.limit === undefined ? 50 : utils.parseNum(params.limit, 'limit');
+		var limit  = params.limit  === undefined ? 50 : utils.parseNum(params.limit, 'limit');
+		var offset = params.offset === undefined ? 0 : utils.parseNum(params.offset, 'offset');
 
 		return resolve({
 			path : 'getnewmatchesfrom',
 			query: {
 				timestamp: timestamp,
-				limit: limit
+				limit: limit,
+				offset: offset
 			}
 		});
 	});
