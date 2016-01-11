@@ -20,10 +20,15 @@ Stack.prototype.add = function (fn, opts) {
 	return new Promise(function (resolve, reject) {
 		self.stack[opts.method || 'push'](function () {
 			return fn({ retries: 0 })
-			.then(self.move.bind(self, null))
+			.then(function (result) {
+				self.currentOp = null;
+				return self.move(null, result);
+			})
 			.then(resolve)
 			.catch(function (err) {
+				self.currentOp = null;
 				if (!ask.retryAllowed(++retry, self.retriesLimit, err)) {
+					self.move();
 					return reject(err);
 				}
 				debug(`retry #${retry} [${err.statusCode}] for ${opts.query.method}:${JSON.stringify(opts.query.params)}`);
@@ -33,7 +38,7 @@ Stack.prototype.add = function (fn, opts) {
 					.catch(reject);
 			});
 		});
-		self.move.call(self);
+		self.move();
 	});
 };
 
@@ -41,9 +46,7 @@ Stack.prototype.move = function (err, result) {
 	var self = this;
 	if (!self.currentOp && self.stack.length) {
 		self.currentOp = setTimeout(function () {
-			self.currentOp = null;
 			self.stack.shift()();
-			self.move();
 		}, self.pause);
 	}
 	if (err) {
