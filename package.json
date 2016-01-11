@@ -1,6 +1,6 @@
 {
   "name": "survarium-api-client",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "survarium game api client",
   "main": "index.js",
   "scripts": {
