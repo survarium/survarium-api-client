@@ -29,6 +29,13 @@ function makeUrl(api, params) {
 	return url;
 }
 
+function makeFileName(params) {
+	return params.path + '_' +
+		qs.stringify(params.query).replace('&', '_') +
+		((new Date()).getTime() / 1000 >>> 0) +
+		'.json';
+}
+
 var parseNum = (function () {
 	let test = /^\d+$/;
 	/**
@@ -75,6 +82,7 @@ Object.defineProperties(module.exports, {
 });
 
 module.exports.url = makeUrl;
+module.exports.file = makeFileName;
 module.exports.parseNum = parseNum;
 module.exports.lang = lang;
 module.exports.isEmpty = isEmpty;

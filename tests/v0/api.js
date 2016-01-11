@@ -338,7 +338,7 @@ test('stack mode', t => {
 	var ids = [3691929, 3692299, 3692251, 3691695, 3683587].sort();
 	ids.forEach(function (id) {
 		api
-			.getMatchStatistic({ id: id }, { stack: true })
+			.getMatchStatistic({ id: id }, { stack: true, saveSource: './' })
 			.then(function () {
 				if (++resolved === ids.length) {
 					t.pass('should be resolved all promises');

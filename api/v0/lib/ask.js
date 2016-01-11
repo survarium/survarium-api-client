@@ -1,6 +1,8 @@
+const fs = require('fs');
 const got = require('got');
 const parseJson = require('parse-json');
 const debug = require('debug')('survarium-api-client');
+const debugSaveSource = require('debug')('survarium-api-client:saveSource');
 const Promise = require('bluebird');
 
 const utils = require('./utils');
@@ -49,7 +51,7 @@ function ask(params, opts) {
 	};
 
 	var run = function () {
-		return got(url, options)
+		var runner = got(url, options)
 			.catch(retry)
 			.then(function (result) {
 				var body = result.body;
@@ -66,6 +68,20 @@ function ask(params, opts) {
 					throw error;
 				}
 			});
+		if (opts.saveSource) {
+			runner = runner.then(function (result) {
+				var dst = opts.saveSource + utils.file(params);
+				fs.appendFile(dst, JSON.stringify(result, null, 4), 'utf8', function (err) {
+					if (err) {
+						debugSaveSource('cannot save source', dst, err);
+					}
+					debugSaveSource('source saved', dst);
+				});
+				return result;
+			});
+		}
+
+		return runner;
 	};
 
 	return run();

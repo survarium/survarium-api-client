@@ -81,12 +81,13 @@ var Api = function (params, options) {
 
 /**
  * Query executor
- * @param {String} method                  API method name
- * @param {Object} [args]                  Execution arguments
- * @param {Object} [args.0]                API query params
- * @param {Object} [args.1]                Quering options
- * @param {Object} [args.1.delay]          delay in ms before executing query
- * @param {Object} [args.1.stack]          run query in stack-mode
+ * @param {String}  method                  API method name
+ * @param {Object}  [args]                  Execution arguments
+ * @param {Object}  [args.0]                API query params
+ * @param {Object}  [args.1]                Quering options
+ * @param {Object}  [args.1.delay]          delay in ms before executing query
+ * @param {Boolean} [args.1.stack]          run query in stack-mode
+ * @param {String}  [args.1.saveSource]     save response json to provided path
  * @returns {function(ask)}
  * @private
  */
@@ -96,7 +97,9 @@ Api.prototype.wrap = function (method, args) {
 	var self = this;
 	var exec = function (opts) {
 		return self.__handlers[method].call(self, params).then(function (query) {
-			return ask.call(self, query, opts);
+			return ask.call(self, query, Object.assign({
+				saveSource: options.saveSource
+			}, opts || {}));
 		});
 	};
 	if (options.delay) {
