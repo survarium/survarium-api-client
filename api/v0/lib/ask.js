@@ -5,14 +5,16 @@ const Promise = require('bluebird');
 
 const utils = require('./utils');
 
+function retryAllowed(retries, retriesLimit, err) {
+	return !(!retriesLimit || retries > retriesLimit || (err && err.statusCode > 199 && err.statusCode < 500 && err.statusCode !== 429));
+}
+
 /**
  * HTTP asker
- * @private
  */
-function ask(params) {
-	var opts = this.options;
-	var retriesLimit = opts.retries || 10;
-
+function ask(params, opts) {
+	opts = opts || this.options;
+	var retriesLimit = opts.retries !==undefined ? opts.retries : 10;
 	var url = utils.url(this.api, params);
 	var method = 'GET';
 
@@ -35,10 +37,10 @@ function ask(params) {
 	var retries = 0;
 
 	var retry = function (err) {
-		if (retries > retriesLimit || (err && err.statusCode > 199 && err.statusCode < 500 && err.statusCode !== 429)) {
+		if (!retryAllowed(retries, retriesLimit, err)) {
 			throw err;
 		}
-		var delay = (200 * retries++ *  Math.random()) >>> 0;
+		var delay = (20 + 200 * ++retries *  Math.random()) >>> 0;
 		debug(`${err && err.statusCode && '[' + err.statusCode + '] ' || ''}retry #${retries} in ${delay}ms ${url}`);
 		return new Promise
 			.delay(delay, options)
@@ -68,5 +70,7 @@ function ask(params) {
 
 	return run();
 }
+
+ask.retryAllowed = retryAllowed;
 
 module.exports = ask;

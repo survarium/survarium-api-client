@@ -5,6 +5,8 @@ const test = require('tape');
 const api  = new (require('../../').v0)({
 	keyPriv: process.env.KEY_PRIV || 'test',
 	keyPub : process.env.KEY_PUB  || 'test'
+}, {
+	stackInterval: process.env.API_STACK_PAUSE || 400
 });
 
 test('api:v0:getMaxMatchId', function (t) {
@@ -328,4 +330,24 @@ test('api:v0:getUserSkills', t => {
 			t.ok(valsOk, 'should be numeric skill levels');
 		})
 		.catch(t.fail.bind(null, 'should get user skills'));
+});
+
+test('stack mode', t => {
+	t.plan(1);
+	var resolved = 0;
+	var ids = [3691929, 3692299, 3692251, 3691695, 3683587].sort();
+	ids.forEach(function (id) {
+		api
+			.getMatchStatistic({ id: id }, { stack: true })
+			.then(function () {
+				if (++resolved === ids.length) {
+					t.pass('should be resolved all promises');
+				}
+			})
+			.catch(function () {
+				if (++resolved === ids.length) {
+					t.pass('should be resolved all promises');
+				}
+			})
+	});
 });
