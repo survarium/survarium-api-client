@@ -98,7 +98,8 @@ Api.prototype.wrap = function (method, args) {
 	var exec = function (opts) {
 		return self.__handlers[method].call(self, params).then(function (query) {
 			return ask.call(self, query, Object.assign({
-				saveSource: options.saveSource
+				saveSource: options.saveSource,
+				retries: options.retries
 			}, opts || {}));
 		});
 	};

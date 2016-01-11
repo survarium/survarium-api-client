@@ -16,7 +16,7 @@ function retryAllowed(retries, retriesLimit, err) {
  */
 function ask(params, opts) {
 	opts = opts || this.options;
-	var retriesLimit = opts.retries !==undefined ? opts.retries : 10;
+	var retriesLimit = opts.retries !== undefined ? opts.retries : 10;
 	var url = utils.url(this.api, params);
 	var method = 'GET';
 
