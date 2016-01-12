@@ -36,6 +36,12 @@ function makeFileName(params) {
 		'.json';
 }
 
+function error(message) {
+	var err = new Error(message);
+	err.statusCode = 400;
+	return err;
+}
+
 var parseNum = (function () {
 	let test = /^\d+$/;
 	/**
@@ -44,17 +50,17 @@ var parseNum = (function () {
 	return function parseNum(id, name) {
 		name = name || 'id';
 		if ([undefined, null].indexOf(id) > -1) {
-			throw new Error(`no ${name} received`);
+			throw error(`no ${name} received`);
 		}
 
 		if (typeof id !== 'number') {
 			if (!test.test(id)) {
-				throw new Error(`${name} must be a number`);
+				throw error(`${name} must be a number`);
 			}
 		}
 
 		if (isNaN(id)) {
-			throw new Error(`${name} is incorrect`);
+			throw error(`${name} is incorrect`);
 		}
 
 		return id;
@@ -81,8 +87,9 @@ Object.defineProperties(module.exports, {
 	}
 });
 
-module.exports.url = makeUrl;
-module.exports.file = makeFileName;
-module.exports.parseNum = parseNum;
-module.exports.lang = lang;
-module.exports.isEmpty = isEmpty;
+exports.url = makeUrl;
+exports.file = makeFileName;
+exports.parseNum = parseNum;
+exports.lang = lang;
+exports.isEmpty = isEmpty;
+exports.error = error;

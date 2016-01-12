@@ -3,57 +3,10 @@
 const Promise  = require('bluebird');
 const handlers = require('./handlers');
 const Sign     = require('./lib/sign');
+const Stack    = require('./lib/stack');
 const ask      = require('./lib/ask');
-const debug    = require('debug')('survarium-api-client');
-
-var Stack = function (options) {
-	this.stack = [];
-	this.currentOp = null;
-	this.retriesLimit = options.retries;
-	this.pause = options.interval;
-};
-
-Stack.prototype.add = function (fn, opts) {
-	var self = this;
-	opts = opts || {};
-	var retry = opts.retry || 0;
-	return new Promise(function (resolve, reject) {
-		self.stack[opts.method || 'push'](function () {
-			return fn({ retries: 0 })
-			.then(function (result) {
-				self.currentOp = null;
-				return self.move(null, result);
-			})
-			.then(resolve)
-			.catch(function (err) {
-				self.currentOp = null;
-				if (!ask.retryAllowed(++retry, self.retriesLimit, err)) {
-					self.move();
-					return reject(err);
-				}
-				debug(`retry #${retry} [${err.statusCode}] for ${opts.query.method}:${JSON.stringify(opts.query.params)}`);
-				return self
-					.add(fn, { retry: retry, method: 'unshift', query: opts.query })
-					.then(resolve)
-					.catch(reject);
-			});
-		});
-		self.move();
-	});
-};
-
-Stack.prototype.move = function (err, result) {
-	var self = this;
-	if (!self.currentOp && self.stack.length) {
-		self.currentOp = setTimeout(function () {
-			self.stack.shift()();
-		}, self.pause);
-	}
-	if (err) {
-		throw err;
-	}
-	return result;
-};
+const defaults = require('./lib/defaults');
+const debug    = require('./lib/debug');
 
 /**
  * API client constructor
@@ -63,7 +16,7 @@ Stack.prototype.move = function (err, result) {
  * @param {String} [params.api=http://api.survarium.com/] API address
  * @param {Object} [options]
  * @param {Number} [options.retries=10]                   Amount of retries
- * @param {Number} [options.stackInterval=20]             Pause in stack (ms)
+ * @param {Number} [options.stackPause=20]                Pause in stack (ms)
  * @constructor
 */
 var Api = function (params, options) {
@@ -73,8 +26,8 @@ var Api = function (params, options) {
 	this.keyPriv = params.keyPriv || 'test';
 	this.api     = params.api     || 'http://api.survarium.com/';
 	this.stack   = new Stack({
-		retries : this.options.retries || 10,
-		interval: this.options.stackInterval || 20
+		retries : this.options.retries,
+		pause: this.options.stackPause
 	});
 
 	this.__handlers = handlers;
@@ -84,13 +37,13 @@ var Api = function (params, options) {
 
 /**
  * Query executor
- * @param {String}  method                  API method name
- * @param {Object}  [args]                  Execution arguments
- * @param {Object}  [args.0]                API query params
- * @param {Object}  [args.1]                Quering options
- * @param {Object}  [args.1.delay]          delay in ms before executing query
- * @param {Boolean} [args.1.stack]          run query in stack-mode
- * @param {String}  [args.1.saveSource]     save response json to provided path
+ * @param {String}          method                  API method name
+ * @param {Object}          [args]                  Execution arguments
+ * @param {Object}          [args.0]                API query params
+ * @param {Object}          [args.1]                Quering options
+ * @param {Number|Boolean}  [args.1.delay]          delay in ms (or true for auto) before executing query
+ * @param {Boolean}         [args.1.stack]          run query in stack-mode
+ * @param {String}          [args.1.saveSource]     save response json to provided path
  * @returns {function(ask)}
  * @private
  */
@@ -101,19 +54,19 @@ Api.prototype.wrap = function (method, args) {
 	var exec = function (opts) {
 		return self.__handlers[method].call(self, params).then(function (query) {
 			return ask.call(self, query, Object.assign({
-				saveSource: options.saveSource,
-				retries: options.retries
+				saveSource: options.saveSource || defaults.saveSource,
+				retries: options.retries !== undefined ? options.retries : defaults.retries
 			}, opts || {}));
 		});
 	};
-	if (options.delay) {
-		return Promise.delay(options.delay).then(exec);
-	}
-	if (options.stack) {
-		return this.stack.add.call(self.stack, exec, { pause: options.stackPause, query: {
+	if (!options.delay && (options.stack || defaults.stackMode)) {
+		return this.stack.add.call(self.stack, exec, { query: {
 			method: method,
 			params: params
 		} });
+	}
+	if (options.delay || defaults.delayMode) {
+		return Promise.delay(typeof options.delay === 'number' ? options.delay : self.delay).then(exec);
 	}
 	return exec();
 };
@@ -328,5 +281,20 @@ Api.prototype.getItemsDict = function (params) {
 Api.prototype.getMapsDict = function (params) {
 	return this.wrap.call(this, 'getMapsDict', arguments);
 };
+
+const delay = (function () {
+	var min = defaults.delayMin;
+	var max = defaults.delayMax;
+	var diff = max - min;
+	return function () {
+		var delay = min + (Math.random() * diff) >>> 0;
+		console.log(delay);
+		return delay;
+	};
+})();
+
+Object.defineProperty(Api.prototype, 'delay', {
+	get: delay
+});
 
 module.exports = Api;

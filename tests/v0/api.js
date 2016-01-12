@@ -27,7 +27,7 @@ test('api:v0:getPublicIdByNickname', function (t) {
 		.catch(t.ok);
 
 	api
-		.getPublicIdByNickname({ nickname: 'vaseker' }, { delay: api.delay })
+		.getPublicIdByNickname({ nickname: 'vaseker' })
 		.then(function (result) {
 			t.ok(result.amount > 0, 'should return results');
 			var found = false;
@@ -68,12 +68,12 @@ test('api:v0:getNicknamesByPublicIds', function (t) {
 		})
 		.catch(t.fail.bind(null, 'should get nicknames of pids array'));
 
-	api.getNicknamesByPublicIds(null, { delay: api.delay })
+	api.getNicknamesByPublicIds(null)
 		.then(t.fail)
 		.catch(t.pass.bind(null, 'should reject without pids'));
 
 	var pid = pids[0];
-	api.getNicknamesByPublicIds({ pids: pid }, { delay: api.delay })
+	api.getNicknamesByPublicIds({ pids: pid })
 		.then(function (result) {
 			t.equal(result.nicknames[pid].toLocaleLowerCase(), players[pid].toLocaleLowerCase(), 'should be correct nickname');
 		})
@@ -90,7 +90,7 @@ test('api:v0:matchesCountByPublicId', function (t) {
 
 	var pid = '15238791817735151910';
 	api
-		.matchesCountByPublicId({ pid: pid }, { delay: api.delay })
+		.matchesCountByPublicId({ pid: pid })
 		.then(function (result) {
 			t.equal(result.pid, pid, 'should be equal pid');
 			t.ok(Number(result.matches_count) >= 1290, 'should be proper number of matches');
@@ -108,7 +108,7 @@ test('api:v0:getMatchesIdByPublicId', function (t) {
 
 	var pid = '15238791817735151910';
 	api
-		.getMatchesIdByPublicId({ pid: pid }, { delay: api.delay })
+		.getMatchesIdByPublicId({ pid: pid })
 		.then(function (result) {
 			t.equal(result.pid, pid, 'should be equal pid');
 			t.ok(Object.keys(result.matches_ids).length === 10, 'should be proper number of matches');
@@ -126,7 +126,7 @@ test('api:v0:getMatchStatistic', function (t) {
 
 	var id = '3578606';
 	api
-		.getMatchStatistic({ id: id }, { delay: api.delay })
+		.getMatchStatistic({ id: id })
 		.then(function (result) {
 			t.ok(result, 'should be result');
 			t.equal(result.match_id, id, 'should be equal id');
@@ -144,7 +144,7 @@ test('api:v0:getUserData', function (t) {
 
 	var pid = '15238791817735151910';
 	api
-		.getUserData({ pid: pid }, { delay: api.delay })
+		.getUserData({ pid: pid })
 		.then(function (result) {
 			t.ok(result, 'should be result');
 
@@ -168,7 +168,7 @@ test('api:v0:getClanAmounts', function (t) {
 	t.plan(1);
 
 	api
-		.getClanAmounts(null, { delay: api.delay })
+		.getClanAmounts(null)
 		.then(function (result) {
 			t.equal(typeof result.amount, 'number', 'should be amount of clans');
 		})
@@ -188,7 +188,7 @@ test('api:v0:getClans', function (t) {
 		.catch(t.fail.bind(null, 'should get clans list'));
 
 	api
-		.getClans({ amount: 100, offset: 50 }, { delay: api.delay })
+		.getClans({ amount: 100, offset: 50 })
 		.then(function (result) {
 			t.ok(result.clans_data, 'should be paginated data');
 			t.ok(Object.keys(result.clans_data).length <= 25, 'should return amount of entities lte 25 limit');
@@ -206,7 +206,7 @@ test('api:v0:getClanInfo', function (t) {
 		.catch(t.pass.bind(null, 'shoud reject without params'));
 
 	api
-		.getClanInfo({ id: 2 }, { delay: api.delay })
+		.getClanInfo({ id: 2 })
 		.then(function (result) {
 			var info = result.clan_info;
 			t.equal(Number(info.id), 2);
@@ -228,7 +228,7 @@ test('api:v0:getClanMembers', function (t) {
 		.catch(t.pass.bind(null, 'should reject without params'));
 
 	api
-		.getClanMembers({ id: 2 }, { delay: api.delay })
+		.getClanMembers({ id: 2 })
 		.then(function (result) {
 			t.equal(result.clan_id, 2);
 			t.ok(result.members, 'should be members list');
@@ -259,7 +259,7 @@ test('api:v0:getNewMatches', function (t) {
 		.catch(t.fail.bind(null, 'should be ok with js timestamp'));
 
 	api
-		.getNewMatches({ timestamp: date }, { delay: api.delay })
+		.getNewMatches({ timestamp: date })
 		.then(function (result) {
 			let matches = result.matches;
 			let ids = Object.keys(matches);
@@ -268,7 +268,7 @@ test('api:v0:getNewMatches', function (t) {
 		.catch(t.fail.bind(null, 'should be ok with timestamp'));
 
 	api
-		.getNewMatches(null, { delay: api.delay })
+		.getNewMatches(null)
 		.then(t.fail.bind(null, 'should fail without timestamp'))
 		.catch(t.pass.bind(null, 'should fail without timestamp'));
 });
@@ -277,7 +277,7 @@ test('api:v0:getSlotsDict', function (t) {
 	t.plan(1);
 
 	api
-		.getSlotsDict({ language: 'russian' }, { delay: api.delay })
+		.getSlotsDict({ language: 'russian' })
 		.then(function (result) {
 			t.ok(result.dictionary, 'should get data');
 		})
@@ -288,7 +288,7 @@ test('api:v0:getItemsDict', function (t) {
 	t.plan(1);
 
 	api
-		.getItemsDict({ language: 'russian' }, { delay: api.delay })
+		.getItemsDict({ language: 'russian' })
 		.then(function (result) {
 			t.ok(result.dictionary, 'should get data');
 		})

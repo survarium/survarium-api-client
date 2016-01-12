@@ -1,8 +1,8 @@
 const fs = require('fs');
 const got = require('got');
 const parseJson = require('parse-json');
-const debug = require('debug')('survarium-api-client');
-const debugSaveSource = require('debug')('survarium-api-client:saveSource');
+const debug = require('./debug');
+const defaults = require('./defaults');
 const Promise = require('bluebird');
 
 const utils = require('./utils');
@@ -16,7 +16,7 @@ function retryAllowed(retries, retriesLimit, err) {
  */
 function ask(params, opts) {
 	opts = opts || this.options;
-	var retriesLimit = opts.retries !== undefined ? opts.retries : 10;
+	var retriesLimit = opts.retries;
 	var url = utils.url(this.api, params);
 	var method = 'GET';
 
@@ -39,11 +39,11 @@ function ask(params, opts) {
 	var retries = 0;
 
 	var retry = function (err) {
-		if (!retryAllowed(retries, retriesLimit, err)) {
+		if (!retryAllowed(++retries, retriesLimit, err)) {
 			throw err;
 		}
-		var delay = (20 + 200 * ++retries *  Math.random()) >>> 0;
-		debug(`${err && err.statusCode && '[' + err.statusCode + '] ' || ''}retry #${retries} in ${delay}ms ${url}`);
+		var delay = (defaults.delayMin + defaults.delayMax * retries *  Math.random()) >>> 0;
+		debug(`retry #${retries} [${err.statusCode}] for ${delay}ms ${url}`);
 		return new Promise
 			.delay(delay, options)
 			.then(got.bind(got, url))
@@ -51,6 +51,7 @@ function ask(params, opts) {
 	};
 
 	var run = function () {
+		debug(`quering ${url}`);
 		var runner = got(url, options)
 			.catch(retry)
 			.then(function (result) {
@@ -73,9 +74,9 @@ function ask(params, opts) {
 				var dst = opts.saveSource + utils.file(params);
 				fs.appendFile(dst, JSON.stringify(result, null, 4), 'utf8', function (err) {
 					if (err) {
-						debugSaveSource('cannot save source', dst, err);
+						debug('cannot save source', dst, err);
 					}
-					debugSaveSource('source saved', dst);
+					debug('source saved', dst);
 				});
 				return result;
 			});

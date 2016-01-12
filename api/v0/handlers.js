@@ -14,13 +14,13 @@ exports.getMaxMatchId = function () {
 exports.getPublicIdByNickname = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var nickname = params.nickname;
 
 		if (utils.isEmpty(nickname)) {
-			return reject(new Error('no nickname received'));
+			return reject(utils.error('no nickname received'));
 		}
 
 		return resolve({
@@ -35,13 +35,13 @@ exports.getPublicIdByNickname = function (params) {
 exports.getNicknamesByPublicIds = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var pids = params.pids;
 
 		if (!pids) {
-			return reject(new Error('no pids received'));
+			return reject(utils.error('no pids received'));
 		}
 
 		if (!(pids instanceof Array)) {
@@ -49,7 +49,7 @@ exports.getNicknamesByPublicIds = function (params) {
 		}
 
 		if (!pids.length) {
-			return reject(new Error('should be received at least one pid'));
+			return reject(utils.error('should be received at least one pid'));
 		}
 
 		return resolve({
@@ -64,7 +64,7 @@ exports.getNicknamesByPublicIds = function (params) {
 exports.matchesCountByPublicId = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var pid = utils.parseNum(params.pid, 'pid');
@@ -81,7 +81,7 @@ exports.matchesCountByPublicId = function (params) {
 exports.getMatchesIdByPublicId = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var pid = utils.parseNum(params.pid, 'pid');
@@ -103,7 +103,7 @@ exports.getMatchesIdByPublicId = function (params) {
 exports.getMatchStatistic = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var id = utils.parseNum(params.id);
@@ -121,7 +121,7 @@ exports.getMatchStatistic = function (params) {
 exports.getUserData = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var pid = utils.parseNum(params.pid, 'pid');
@@ -163,7 +163,7 @@ exports.getClans = function (params) {
 exports.getClanInfo = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var id = utils.parseNum(params.id);
@@ -180,7 +180,7 @@ exports.getClanInfo = function (params) {
 exports.getClanMembers = function (params) {
 	return new Promise(function (resolve, reject) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var id = utils.parseNum(params.id);
@@ -259,7 +259,7 @@ exports.getMapsDict = function (params) {
 exports.getUserSkills = function (params) {
 	return new Promise(function (resolve) {
 		if (!params) {
-			return reject(new Error('no params received'));
+			return reject(utils.error('no params received'));
 		}
 
 		var pid = utils.parseNum(params.pid, 'pid');
