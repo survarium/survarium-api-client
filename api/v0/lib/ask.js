@@ -38,23 +38,31 @@ function ask(params, opts) {
 
 	var retries = 0;
 
+	var request = function (url) {
+		debug(`quering ${url}`);
+		return got.apply(got, arguments);
+	};
+
 	var retry = function (err) {
 		if (!retryAllowed(++retries, retriesLimit, err)) {
 			throw err;
 		}
 		var delay = (defaults.delayMin + defaults.delayMax * retries *  Math.random()) >>> 0;
-		debug(`retry #${retries} [${err.statusCode}] for ${delay}ms ${url}`);
+		debug(`error [${err.statusCode}], plan retry #${retries} after ${delay}ms for ${url}`);
 		return new Promise
 			.delay(delay, options)
-			.then(got.bind(got, url))
+			.then(request.bind(null, url))
 			.catch(retry);
 	};
 
+	var ts = process.hrtime();
+
 	var run = function () {
-		debug(`quering ${url}`);
-		var runner = got(url, options)
+		var runner = request(url, options)
 			.catch(retry)
 			.then(function (result) {
+				ts = process.hrtime(ts);
+				debug(`completed ${url} with ${retries} retries in ${(ts[0] + ts[1] / 1e9).toFixed(2)}sec.`);
 				var body = result.body;
 				try {
 					return parseJson(body);

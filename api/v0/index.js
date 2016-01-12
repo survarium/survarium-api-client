@@ -22,9 +22,9 @@ const debug    = require('./lib/debug');
 var Api = function (params, options) {
 	params = params || {};
 	this.options = options || {};
-	this.keyPub  = params.keyPub  || 'test';
-	this.keyPriv = params.keyPriv || 'test';
-	this.api     = params.api     || 'http://api.survarium.com/';
+	this.keyPub  = params.keyPub  || defaults.keyPub;
+	this.keyPriv = params.keyPriv || defaults.keyPriv;
+	this.api     = params.api     || defaults.apiUrl;
 	this.stack   = new Stack({
 		retries : this.options.retries,
 		pause: this.options.stackPause

@@ -1,13 +1,13 @@
 'use strict';
 
 const test = require('tape');
+const tapSpec = require('tap-spec');
 
-const api  = new (require('../../').v0)({
-	keyPriv: process.env.KEY_PRIV || 'test',
-	keyPub : process.env.KEY_PUB  || 'test'
-}, {
-	stackInterval: process.env.API_STACK_PAUSE || 20
-});
+test.createStream()
+	.pipe(tapSpec())
+	.pipe(process.stdout);
+
+const api  = new (require('../../').v0)();
 
 test('api:v0:getMaxMatchId', function (t) {
 	api

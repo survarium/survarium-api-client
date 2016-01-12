@@ -4,7 +4,7 @@
   "description": "survarium game api client",
   "main": "index.js",
   "scripts": {
-    "test": "tape test tests/**/*.js | ./node_modules/.bin/tap-spec",
+    "test": "DEBUG_FD=3 tape test tests/**/*.js 3>debug.log && cat debug.log",
     "deps": "npm i && (cd server && npm run deps)",
     "doc": "jsdoc -c .jsdoc.json",
     "doc-pages": "rm -rf ./docs && npm run doc && git add docs && git commit -am 'JSDoc up' && git push -f origin gh-pages"

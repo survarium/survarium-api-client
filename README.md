@@ -27,5 +27,4 @@ Environment variables are
 * `SV_API_DELAY_MAX` – max delay for api request [delay mode] and incremental base for retry pause [default=200] 
 * `SV_API_DELAY_MODE` – enable quering in delay mode (requests delayed before starts, possible parallel requests) [default=false]
 * `SV_API_STACK_MODE` – enable quering in stack mode (each request may be runned only after previous been resolved) [default=false]
-* `SV_API_STACK_PAUSE` – pause before starting new request after previous ends, ms [default=20]
 * `SV_API_SAVE_SOURCE` – save RAW JSON response to target directory (trailing slash required)[default=false]
