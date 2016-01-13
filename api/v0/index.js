@@ -287,9 +287,7 @@ const delay = (function () {
 	var max = defaults.delayMax;
 	var diff = max - min;
 	return function () {
-		var delay = min + (Math.random() * diff) >>> 0;
-		console.log(delay);
-		return delay;
+		return min + (Math.random() * diff) >>> 0;
 	};
 })();
 
