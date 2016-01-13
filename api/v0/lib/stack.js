@@ -8,22 +8,19 @@ var Stack = function (options) {
 	this.pause = options.pause !== undefined ? options.pause : defaults.delayMin;
 };
 
+Stack.prototype.next = function (response, err, result) {
+	this.currentOp = null;
+	return response(this.move(err, result));
+};
+
 Stack.prototype.add = function (fn, opts) {
 	var self = this;
 	opts = opts || {};
 	return new Promise(function (resolve, reject) {
 		self.stack[opts.method || 'push'](function () {
 			return fn()
-				.then(function (result) {
-					self.currentOp = null;
-					return self.move(null, result);
-				})
-				.then(resolve)
-				.catch(function (err) {
-					self.currentOp = null;
-					self.move();
-					return reject(err);
-				});
+				.then(self.next.bind(self, resolve, null))
+				.catch(self.next.bind(self, reject, null))
 		});
 		self.move();
 	});
